@@ -1,5 +1,46 @@
 <template>
   <div class="auth">
+    <div id="tab">
+      <section id="info">
+        <h1>cleanmail</h1>
+        <h2>Uwolnij się od spamu!</h2>
+        <hgroup>
+          <h3>Outlook</h3>
+          <h3>Gmail</h3>
+          <h3>WP</h3>
+          <h3>Onet</h3>
+          <h3>Interia</h3>
+        </hgroup>
+      </section>
+      <section id="auth">
+        <h2>{{ authTitle }}</h2>
+        <div class="auth-login" v-if="auth == 1">
+          <input type="text" placeholder="Email">
+          <input type="password" placeholder="Hasło">
+        </div>
+        <div class="auth-register" v-if="auth == 2">
+          <input type="text" placeholder="Email">
+          <input type="password" placeholder="Hasło">
+          <input type="password" placeholder="Powtórz hasło">
+        </div>
+        <div class="auth-password" v-if="auth == 3">
+          <input type="text" placeholder="Email">
+        </div>
+        <button class="local">{{ authButton }}<i class="material-icons">keyboard_arrow_right</i></button>
+        <nav id="auth-links">
+          <ul>
+            <li>
+              <a href="#" @click="changeAuth(1)">{{ link1 }}</a>
+            </li>
+            <li>
+              <a href="#" @click="changeAuth(2)">{{ link2 }}</a>
+            </li>
+          </ul>
+        </nav>
+        <button class="outer">zaloguj się przez google</button>
+      </section>
+    </div>
+    <alert></alert>
   </div>
 </template>
 
@@ -10,6 +51,114 @@ export default {
   name: 'Auth',
   components: {
     Alert
+  },
+  data(){
+    return{
+      auth: 1,
+      authTitle: '',
+      authButton: '',
+      textLogin: 'Logowanie',
+      textRegister: 'Rejestracja',
+      textRemember: 'Przypomnienie hasła',
+      textButtonLogin: 'zaloguj',
+      textButtonRegister: 'zarejestruj',
+      textButtonRemember: 'przypomnij',
+      link1: '',
+      link2: '',
+    }
+  },
+  created(){
+    this.authTitle = this.textLogin;
+    this.authButton = this.textButtonLogin;
+    this.link1 = this.textRegister;
+    this.link2 = this.textRemember;
+  },
+  methods:{
+    changeAuth(id){
+      if(id == 1){
+        if(this.auth == 1){
+          this.auth = 2;
+          this.authTitle = this.textRegister;
+          this.authButton = this.textButtonRegister;
+          this.link1 = this.textLogin;
+          this.link2 = this.textRemember;
+        }else if(this.auth == 2){
+          this.auth = 1;
+          this.authTitle = this.textLogin;
+          this.authButton = this.textButtonLogin;
+          this.link1 = this.textRegister;
+          this.link2 = this.textRemember;
+        }else{
+          this.auth = 1;
+          this.authTitle = this.textLogin;
+          this.authButton = this.textButtonLogin;
+          this.link1 = this.textRegister;
+          this.link2 = this.textRemember;
+        }
+      }else{
+        if(this.auth == 1){
+          this.auth = 3;
+          this.authTitle = this.textRemember;
+          this.authButton = this.textButtonRemember;
+          this.link1 = this.textLogin;
+          this.link2 = this.textRegister;
+        }else if(this.auth == 2){
+          this.auth = 3;
+          this.authTitle = this.textRemember;
+          this.authButton = this.textButtonRemember;
+          this.link1 = this.textLogin;
+          this.link2 = this.textRegister;
+        }else{
+          this.auth = 2;
+          this.authTitle = this.textRegister;
+          this.authButton = this.textButtonRegister;
+          this.link1 = this.textLogin;
+          this.link2 = this.textRemember;
+        }
+      }
+    }
   }
 }
 </script>
+
+<style lang="scss">
+  div.auth { width: 100%; height: 100%; background: #8d51c2; background: linear-gradient(315deg, rgba(230,82,204,1) 0%, rgba(155,103,203,1) 100%); }
+  div#tab { display: flex; width: 900px; height: 600px; position: absolute; top: calc(50% - 300px); left: calc(50% - 450px); box-shadow: 0px 0px 3px #58167a; border-radius: 15px; }
+  div#tab section#info { display: flex; flex-direction: column; justify-content: space-between; width: 55%; background: #58167a; 
+  background: linear-gradient(315deg, rgba(50,38,148,1) 0%, rgba(87,23,120,1) 100%); border-top-left-radius: 15px;  border-bottom-left-radius: 15px; }
+  div#tab section#info h1 { margin: 0; padding: 25px; color: rgba(255, 255, 255, 0.6); font-size: 16px; height: 200px; text-transform: uppercase; font-weight: 500; letter-spacing: 5px;;}
+  div#tab section#info h2 { margin: 0; padding: 0; color: #fff; font-size: 34px; height: 200px; text-align: center; line-height: 200px; font-weight: 400;}
+  div#tab section#info hgroup { display: flex; height: 200px; padding: 25px; justify-content: center; align-items: flex-end; }
+  div#tab section#info hgroup h3 { margin: 0 5px; padding: 0; font-size: 16px; color: rgba(255, 255, 255, 0.1); }
+  div#tab section#auth { width: 45%; padding: 50px; background: #fff; border-top-right-radius: 15px; border-bottom-right-radius: 15px; }
+  div#tab section#auth h2 { margin: 0 0 35px 0; padding: 0; font-size: 28px; font-weight: 700; color: #424242; }
+  div#tab section#auth input { display: block; width: 100%; margin-bottom: 15px; padding-bottom: 15px; border: 0; border-bottom: 2px solid transparent; color: #8453c6;
+  border-image: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,0.5) 100%); border-image-slice: 1; font-weight: 600; font-size: 13px; }
+  div#tab section#auth input::placeholder { color: #BDBDBD; }
+  div#tab section#auth input:focus { outline: 0; border-image: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,1) 100%); border-image-slice: 1; }
+  div#tab section#auth button.local { display: block; width: 100%; height: 40px; margin: 35px 0; position: relative; border: 0; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); 
+  font-size: 11px; letter-spacing: 4px; background: #8453c6; background: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,1) 100%);  }
+  div#tab section#auth button.local:focus { outline: 0; }
+  div#tab section#auth button.local i.material-icons { position: absolute; top: calc(50% - 12px); right: 5px; color: rgba(255, 255, 255, 0.5); }
+  div#tab section#auth button.local:hover { color: #fff; }
+  div#tab section#auth button.local:hover i.material-icons { color: #fff; }
+  div#tab section#auth nav#auth-links ul { margin: 35px 0; padding: 0; }
+  div#tab section#auth nav#auth-links ul li { list-style: none; text-align: center; }
+  div#tab section#auth nav#auth-links ul li a { text-decoration: none; color: #BDBDBD; font-weight: 600; font-size: 12px; }
+  div#tab section#auth nav#auth-links ul li a:hover { color: #9E9E9E; }
+  div#tab section#auth button.outer { display: block; width: 100%; height: 40px; margin: 35px 0; padding: 0 0 0 60px; text-transform: capitalize; border: 0; font-size: 12px; 
+  background: #8d51c2; background: url('../assets/google-icon.png') no-repeat 25px 50%, linear-gradient(90deg, rgba(50,38,148,1) 0%, rgba(132,83,198,1) 100%);
+  text-align: left; color: rgba(255, 255, 255, 0.8); font-weight: 600; }
+  div#tab section#auth button.outer:focus { outline: 0; }
+  div#tab section#auth button.outer:hover { color: #fff; }
+
+  @media (max-width: 900px) {
+    div#tab { width: 405px; left: calc(50% - 202.5px); }
+    div#tab section#info { display: none; }
+    div#tab section#auth { width: 100%; border-radius: 15px; }
+  }
+
+  @media (max-width: 405px) {
+    div#tab { width: 100%; left: 0; }
+  }
+</style>
