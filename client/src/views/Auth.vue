@@ -2,7 +2,7 @@
   <div class="auth">
     <div id="tab">
       <section id="info">
-        <h1>cleanmail</h1>
+        <h1>c<span>lean</span>m<span>ail</span></h1>
         <h2>Uwolnij się od spamu!</h2>
         <hgroup>
           <h3>Outlook</h3>
@@ -15,18 +15,18 @@
       <section id="auth">
         <h2>{{ authTitle }}</h2>
         <div class="auth-login" v-if="auth == 1">
-          <input type="text" placeholder="Email">
-          <input type="password" placeholder="Hasło">
+          <input class="default" type="text" placeholder="Email">
+          <input class="default" type="password" placeholder="Hasło">
         </div>
         <div class="auth-register" v-if="auth == 2">
-          <input type="text" placeholder="Email">
-          <input type="password" placeholder="Hasło">
-          <input type="password" placeholder="Powtórz hasło">
+          <input class="default" type="text" placeholder="Email">
+          <input class="default" type="password" placeholder="Hasło">
+          <input class="default" type="password" placeholder="Powtórz hasło">
         </div>
         <div class="auth-password" v-if="auth == 3">
-          <input type="text" placeholder="Email">
+          <input class="default" type="text" placeholder="Email">
         </div>
-        <button class="local">{{ authButton }}<i class="material-icons">keyboard_arrow_right</i></button>
+        <button class="default">{{ authButton }}<i class="material-icons">keyboard_arrow_right</i></button>
         <nav id="auth-links">
           <ul>
             <li>
@@ -126,22 +126,24 @@ export default {
   div#tab { display: flex; width: 900px; height: 600px; position: absolute; top: calc(50% - 300px); left: calc(50% - 450px); box-shadow: 0px 0px 3px #58167a; border-radius: 15px; }
   div#tab section#info { display: flex; flex-direction: column; justify-content: space-between; width: 55%; background: #58167a; 
   background: linear-gradient(315deg, rgba(50,38,148,1) 0%, rgba(87,23,120,1) 100%); border-top-left-radius: 15px;  border-bottom-left-radius: 15px; }
-  div#tab section#info h1 { margin: 0; padding: 25px; color: rgba(255, 255, 255, 0.6); font-size: 16px; height: 200px; text-transform: uppercase; font-weight: 500; letter-spacing: 5px;;}
+  div#tab section#info h1 { margin: 0; padding: 25px; color: rgba(255, 255, 255, 0.6); color: #8453c6; font-size: 24px; height: 200px; text-transform: uppercase; font-weight: 600; 
+  letter-spacing: 5px; }
+  div#tab section#info h1 span { font-size: 16px; font-weight: 700;  }
   div#tab section#info h2 { margin: 0; padding: 0; color: #fff; font-size: 34px; height: 200px; text-align: center; line-height: 200px; font-weight: 400;}
   div#tab section#info hgroup { display: flex; height: 200px; padding: 25px; justify-content: center; align-items: flex-end; }
   div#tab section#info hgroup h3 { margin: 0 5px; padding: 0; font-size: 16px; color: rgba(255, 255, 255, 0.1); }
   div#tab section#auth { width: 45%; padding: 50px; background: #fff; border-top-right-radius: 15px; border-bottom-right-radius: 15px; }
   div#tab section#auth h2 { margin: 0 0 35px 0; padding: 0; font-size: 28px; font-weight: 700; color: #424242; }
-  div#tab section#auth input { display: block; width: 100%; margin-bottom: 15px; padding-bottom: 15px; border: 0; border-bottom: 2px solid transparent; color: #8453c6;
+  input.default { display: block; width: 100%; margin-bottom: 15px; padding-bottom: 15px; border: 0; border-bottom: 2px solid transparent; color: #8453c6;
   border-image: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,0.5) 100%); border-image-slice: 1; font-weight: 600; font-size: 13px; }
-  div#tab section#auth input::placeholder { color: #BDBDBD; }
-  div#tab section#auth input:focus { outline: 0; border-image: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,1) 100%); border-image-slice: 1; }
-  div#tab section#auth button.local { display: block; width: 100%; height: 40px; margin: 35px 0; position: relative; border: 0; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); 
+  input.default::placeholder { color: #BDBDBD; }
+  input.default:focus { outline: 0; border-image: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,1) 100%); border-image-slice: 1; }
+  button.default { display: block; width: 100%; height: 40px; margin: 35px 0; position: relative; border: 0; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); 
   font-size: 11px; letter-spacing: 4px; background: #8453c6; background: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,1) 100%);  }
-  div#tab section#auth button.local:focus { outline: 0; }
-  div#tab section#auth button.local i.material-icons { position: absolute; top: calc(50% - 12px); right: 5px; color: rgba(255, 255, 255, 0.5); }
-  div#tab section#auth button.local:hover { color: #fff; }
-  div#tab section#auth button.local:hover i.material-icons { color: #fff; }
+  button.default:focus { outline: 0; }
+  button.default i.material-icons { position: absolute; top: calc(50% - 12px); right: 5px; color: rgba(255, 255, 255, 0.5); }
+  button.default:hover { color: #fff; }
+  button.default:hover i.material-icons { color: #fff; }
   div#tab section#auth nav#auth-links ul { margin: 35px 0; padding: 0; }
   div#tab section#auth nav#auth-links ul li { list-style: none; text-align: center; }
   div#tab section#auth nav#auth-links ul li a { text-decoration: none; color: #BDBDBD; font-weight: 600; font-size: 12px; }
