@@ -7,17 +7,17 @@
     <nav>
       <ul>
         <li>
-          <a href="#" v-b-tooltip.hover title="Dodaj nową skrzynkę pocztową" @click="showBoxAddMail()">
+          <a href="javascript:;" v-b-tooltip.hover title="Dodaj nową skrzynkę pocztową" @click="showPopupAddMail()">
             <i class="material-icons">add_box</i>
           </a>
         </li>
         <li>
-          <a href="#" v-b-tooltip.hover title="Ustawienia">
+          <a href="javascript:;" v-b-tooltip.hover title="Ustawienia" @click="showPopupSettings()">
             <i class="material-icons">settings</i>
           </a>
         </li>
         <li>
-          <a href="#" v-b-tooltip.hover title="Wyloguj">
+          <a href="javascript:;" v-b-tooltip.hover title="Wyloguj">
             <i class="material-icons">exit_to_app</i>
           </a>
         </li>
@@ -33,8 +33,11 @@ export default {
     showMenu(){
       this.$store.commit('toggleMenu', 1);
     },
-    showBoxAddMail(){
-      this.$store.commit('toggleBoxAddMail');
+    showPopupAddMail(){
+      this.$store.commit('togglePopupAddMail');
+    },
+    showPopupSettings(){
+      this.$store.commit('togglePopupSettings');
     }
   }
 }
@@ -43,16 +46,16 @@ export default {
 <style lang="scss">
   header.core { display: flex; justify-content: space-between; height: 50px; background: #58167a; 
   background: linear-gradient(315deg, rgba(50,38,148,1) 0%, rgba(87,23,120,1) 100%); }
-  header.core h1 { display: block; width: 300px; margin: 0; padding: 0; color: rgba(255, 255, 255, 0.6); font-size: 24px; height: 200px; font-weight: 600; letter-spacing: 5px; 
-  line-height: 50px; text-transform: uppercase; color: #8453c6; text-align: center; }
+  header.core h1 { display: block; width: 300px; margin: 0; padding: 0; color: rgba(255, 255, 255, 0.6); font-size: 24px; height: 200px; font-weight: 600; 
+  letter-spacing: 5px; line-height: 50px; text-transform: uppercase; color: $purple; text-align: center; }
   header.core h1 span { font-size: 16px; font-weight: 700; }
   header.core div#menu { display: none; justify-content: center; align-items: center; width: 60px; height: 50px; cursor: pointer; }
-  header.core div#menu:hover { background: #322694; }
+  header.core div#menu:hover { background: $blue; }
   header.core div#menu i.material-icons { color: rgba(255, 255, 255, 0.9); font-size: 25px; }
   header.core nav ul { display: flex; margin: 0; padding: 0; }
   header.core nav ul li { list-style: none; }
   header.core nav ul li a { display: block; width: 60px; height: 50px; text-align: center; }
-  header.core nav ul li a:hover { background: #58167a; }
+  header.core nav ul li a:hover { background: $purpleDark; }
   header.core nav ul li a i.material-icons { line-height: 50px; color: rgba(255, 255, 255, 0.9); font-size: 25px; }
   header.core nav ul li a:hover i.material-icons { color: #fff; }
 

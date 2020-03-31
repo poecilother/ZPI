@@ -55,10 +55,10 @@ export default {
 </script>
 
 <style lang="scss">
-  header.sub { display: flex; height: 50px; background: #f3f2f1; }
+  header.sub { display: flex; height: 50px; background: $grey; }
   header.sub div.container-button { display: flex; justify-content: center; align-items: center; width: 300px; }
-  header.sub div.container-button button { display: block; height: 35px; padding: 0 25px; background: #322694; border: 0; color: #fff; border-radius: 3px; font-size: 14px; }
-  header.sub div.container-button button:hover { background: #25207D; }
+  header.sub div.container-button button { display: block; height: 35px; padding: 0 25px; background: $blue; border: 0; color: #fff; border-radius: 3px; font-size: 14px; }
+  header.sub div.container-button button:hover { background: $blueDark; }
   header.sub ul { display: flex; align-items: center; margin: 0; padding: 0; }
   header.sub ul li { display: flex; padding: 7px 10px; list-style: none; color: rgba(0, 0, 0, 0.5); cursor: pointer; }
   header.sub ul li:hover  { background: #edebe9; color: rgba(0, 0, 0, 0.7); }

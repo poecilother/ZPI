@@ -7,7 +7,8 @@
       <router-view></router-view>
     </div>
     <button-add style="display: none;"></button-add>
-    <mail-add></mail-add>
+    <popup-add-mail></popup-add-mail>
+    <popup-settings></popup-settings>
   </div>
 </template>
 
@@ -17,7 +18,8 @@ import HeaderSub from '@/components/HeaderSub.vue'
 import MenuCore from '@/components/MenuCore.vue'
 import Box from '@/components/Box.vue'
 import ButtonAdd from '@/components/ButtonAdd.vue'
-import MailAdd from '@/components/MailAdd.vue'
+import PopupAddMail from '@/components/PopupAddMail.vue'
+import PopupSettings from '@/components/PopupSettings.vue'
 import Alert from '@/components/Alert.vue'
 
 export default {
@@ -28,7 +30,8 @@ export default {
     MenuCore,
     Box,
     ButtonAdd,
-    MailAdd,
+    PopupAddMail,
+    PopupSettings,
     Alert
   },
   data(){
@@ -70,6 +73,5 @@ export default {
 
 <style lang="scss">
   div.inbox { height: 100vh; }
-  div#wrapper { display: flex; height: calc(100vh - 50px - 50px); background: #faf9f8; overflow-y: overlay;}
-
+  div#wrapper { display: flex; height: calc(100vh - 50px - 50px); background: #faf9f8; overflow-y: overlay; } 
 </style>
