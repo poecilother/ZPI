@@ -5,7 +5,10 @@ module.exports = {
         return (req, res, next) => {
             const result = Joi.validate(req.body, schema);
             if (result.error) {
-                return res.json(result.error);
+                return res.json({
+                    success: 0,
+                    msg: result.error.details[0].message
+                });
             }
 
             if (!req.value) { req.value = {}; }
