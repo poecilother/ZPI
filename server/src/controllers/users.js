@@ -176,7 +176,12 @@ module.exports = {
             return res.json({ success: 0 });
         }
 
-        return res.json({ success: 1 });
+        jwt.verify(req.body.token, process.env.JWT_REFRESH_SECRET, (err, decodedToken) => {
+            if (err) {
+                return res.json({ success: 0 });
+            }
+            return res.json({ success: 1 });
+        });
     },
 
     secret: async (req, res, next) => {
