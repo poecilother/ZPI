@@ -24,17 +24,18 @@ module.exports = {
 
         const foundUserEmail = await User.findOne({ 'local.email': email });
         const foundUserUsername = await User.findOne({ 'local.username': username });
-        
-        if (foundUserEmail) { 
-            return res.status(403).json({ 
-                success: 0,
-                message: 'Wrong email' 
-            });
-        } 
+
         if (foundUserUsername) { 
             return res.status(403).json({ 
                 success: 0,
-                message: 'Wrong username'
+                msg: 'Login jest już zajęty'
+            });
+        } 
+
+        if (foundUserEmail) { 
+            return res.status(403).json({ 
+                success: 0,
+                msg: 'Email jest już zajęty' 
             });
         } 
 
@@ -56,7 +57,8 @@ module.exports = {
         await newRefreshToken.save();
 
         res.status(200).json({
-            success: 1
+            success: 1,
+            msg: 'Pomyślnie zarejestrowano'
         });
     },
 
@@ -69,7 +71,8 @@ module.exports = {
 
         res.status(200).json({
             token,
-            refToken
+            refToken,
+            msg: 'Zalogowano'
         });
         console.log('signIn');
     },
