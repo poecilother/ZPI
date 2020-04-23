@@ -20,6 +20,8 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/users', require('./routes/users'));
+
+
 app.get('/', (req, res) => { res.send('CleanMail server') });
 
 

@@ -25,9 +25,19 @@ module.exports = {
         const foundUserEmail = await User.findOne({ 'local.email': email });
         const foundUserUsername = await User.findOne({ 'local.username': username });
         
-        if (foundUserEmail || foundUserUsername) { 
-            return res.status(403).json({ error: 'Email or username is already in use' });
+        if (foundUserEmail) { 
+            return res.status(403).json({ 
+                success: 0,
+                message: 'Wrong email' 
+            });
         } 
+        if (foundUserUsername) { 
+            return res.status(403).json({ 
+                success: 0,
+                message: 'Wrong username'
+            });
+        } 
+
 
         const newUser = new User({ 
             method: 'local',
@@ -46,8 +56,7 @@ module.exports = {
         await newRefreshToken.save();
 
         res.status(200).json({
-            token,
-            refToken
+            success: 1
         });
     },
 
