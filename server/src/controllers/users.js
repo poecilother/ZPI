@@ -61,7 +61,6 @@ module.exports = {
 
     signIn: async  (req, res, next) => {
 
-        console.log('user:'+ req.body.username)
         const token = signToken(req.user._id);
         const refToken = refreshToken(req.user._id);
 
@@ -74,7 +73,6 @@ module.exports = {
             refToken,
             msg: 'Zalogowano'
         });
-        console.log('signIn');
     },
 
     googleOAuth: async (req, res, next) => {
@@ -98,7 +96,7 @@ module.exports = {
                 const existingUser = await User.findOne({ 'google.id': userid });
                 let token = null;
                 let refToken = null;
-    
+                
                 if (!existingUser) {
                     const newUser = new User({
                         method: 'google',
@@ -107,7 +105,7 @@ module.exports = {
                             username: payload.name
                         }
                     });
-    
+
                     await newUser.save();
     
                     token = signToken(newUser._id);
@@ -170,7 +168,7 @@ module.exports = {
             return res.json({ success: 0 });
         }
 
-        const isValid = RefreshToken.findOne({ token: req.body.token });
+        const isValid = await RefreshToken.findOne({ token: req.body.token });
 
         if (!isValid) {
             return res.json({ success: 0 });
@@ -181,6 +179,27 @@ module.exports = {
                 return res.json({ success: 0 });
             }
             return res.json({ success: 1 });
+        });
+    },
+
+    checkAccount: async (req, res, next) => {
+        if(!req.body.token){
+            return res.json({ success: 0 });
+        }
+
+        jwt.verify(req.body.token, process.env.JWT_SECRET, (err, decodedToken) => {
+            if (err) {
+                return res.json({ success: 0 });
+            } else {
+                req.userId = decodedToken.sub;
+
+                User.find({ '_id': req.userId }, (err, user) => {
+                    return res.json({
+                        success: 1,
+                        account: user[0].method
+                    });
+                });
+            }
         });
     },
 

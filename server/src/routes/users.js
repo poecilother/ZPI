@@ -25,6 +25,9 @@ router.route('/getnewtoken')
 router.route('/checkuser')
     .get(UsersController.checkUserRefToken);
 
+router.route('/checkAccount')
+    .get(UsersController.checkAccount);
+
 router.route('/secret')
     .get(jwtAuthenticate(), UsersController.secret);
 
