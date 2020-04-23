@@ -19,6 +19,9 @@ router.route('/oauth/google')
 router.route('/signout')
     .post(UsersController.signOut);
 
+router.route('/changepassword')
+    .post(UsersController.changePassword);
+
 router.route('/getnewtoken')
     .post(UsersController.getNewToken);
 

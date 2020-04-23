@@ -17,7 +17,7 @@ refreshToken = userId => {
     return jwt.sign({
         sub: userId
     }, process.env.JWT_REFRESH_SECRET, {
-        expiresIn: '5h'
+        expiresIn: '30d'
     });
 };
 
@@ -144,6 +144,10 @@ module.exports = {
         res.json({ success: 1 });
     },
 
+    changePassword: async (req, res, next) => {
+
+    },
+
     getNewToken: async (req, res, next) => {
         const isValid = RefreshToken.findOne({ token: req.body.token });
 
@@ -187,7 +191,7 @@ module.exports = {
             res.json({ success: 0 });
         }
 
-        jwt.verify(req.body.token, process.env.JWT_SECRET, (err, decodedToken) => {
+        jwt.verify(req.body.token, process.env.JWT_REFRESH_SECRET, (err, decodedToken) => {
             if (err) {
                 res.json({ success: 0 });
             } else {
