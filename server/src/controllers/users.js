@@ -126,7 +126,7 @@ module.exports = {
             } catch (err) {
                 return res.json({
                     success: 0,
-                    msg: 'Zły token'
+                    msg: err
                 });
             }
         }
@@ -162,6 +162,21 @@ module.exports = {
 
         const token = signToken(req.userId);
         res.status(200).json({ token });
+    },
+
+    checkUserRefToken: async (req, res, next) => {
+    
+        if(!req.body.token){
+            return res.json({ success: 0 });
+        }
+
+        const isValid = RefreshToken.findOne({ token: req.body.token });
+
+        if (!isValid) {
+            return res.json({ success: 0 });
+        }
+
+        return res.json({ success: 1 });
     },
 
     secret: async (req, res, next) => {

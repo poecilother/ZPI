@@ -22,6 +22,9 @@ router.route('/signout')
 router.route('/getnewtoken')
     .post(UsersController.getNewToken);
 
+router.route('/checkuser')
+    .get(UsersController.checkUserRefToken);
+
 router.route('/secret')
     .get(jwtAuthenticate(), UsersController.secret);
 
