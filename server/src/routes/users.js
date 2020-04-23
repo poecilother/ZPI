@@ -23,6 +23,6 @@ router.route('/getnewtoken')
     .post(UsersController.getNewToken);
 
 router.route('/secret')
-    .get(UsersController.secret);
+    .get(passport.authenticate('jwt', { session: false }), UsersController.secret);
 
 module.exports = router;
