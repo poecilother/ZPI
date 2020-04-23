@@ -29,14 +29,14 @@ module.exports = {
         const foundUserUsername = await User.findOne({ 'local.username': username });
 
         if (foundUserUsername) { 
-            return res.json({ 
+            res.json({ 
                 success: 0,
                 msg: 'Login jest już zajęty'
             });
         } 
 
         if (foundUserEmail) { 
-            return res.json({ 
+            res.json({ 
                 success: 0,
                 msg: 'Email jest już zajęty' 
             });
@@ -136,24 +136,24 @@ module.exports = {
 
         const isSignIn = await RefreshToken.findOne({ token: refToken });
         if (!isSignIn) {
-           return res.json({ message: 'Already logged out' });
+           res.json({ message: 'Already logged out' });
         };
 
 
         await RefreshToken.deleteOne({ token: refToken });
-        return res.json({ success: 1 });
+        res.json({ success: 1 });
     },
 
     getNewToken: async (req, res, next) => {
         const isValid = RefreshToken.findOne({ token: req.body.token });
 
         if (!isValid) {
-            return res.json({ success: 0 });
+            res.json({ success: 0 });
         }
 
         jwt.verify(req.body.token, process.env.JWT_REFRESH_SECRET, (err, decodedToken) => {
             if (err) {
-                return res.json({ success: 0 });
+                res.json({ success: 0 });
             }
             req.userId = decodedToken.id;
         });
@@ -165,36 +165,36 @@ module.exports = {
     checkUserRefToken: async (req, res, next) => {
     
         if(!req.body.token){
-            return res.json({ success: 0 });
+            res.json({ success: 0 });
         }
 
         const isValid = await RefreshToken.findOne({ token: req.body.token });
 
         if (!isValid) {
-            return res.json({ success: 0 });
+            res.json({ success: 0 });
         }
 
-        jwt.verify(req.body.token, process.env.JWT_REFRESH_SECRET, (err, decodedToken) => {
+        jwt.verify(req.body.token, process.env.JWT_REFRESH_SECRET, (err) => {
             if (err) {
-                return res.json({ success: 0 });
+                res.json({ success: 0 });
             }
-            return res.json({ success: 1 });
+            res.json({ success: 1 });
         });
     },
 
     checkAccount: async (req, res, next) => {
         if(!req.body.token){
-            return res.json({ success: 0 });
+            res.json({ success: 0 });
         }
 
         jwt.verify(req.body.token, process.env.JWT_SECRET, (err, decodedToken) => {
             if (err) {
-                return res.json({ success: 0 });
+                res.json({ success: 0 });
             } else {
                 req.userId = decodedToken.sub;
 
                 User.find({ '_id': req.userId }, (err, user) => {
-                    return res.json({
+                    res.json({
                         success: 1,
                         account: user[0].method
                     });
