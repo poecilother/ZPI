@@ -7,7 +7,8 @@ module.exports = {
             passport.authenticate('local', { session: false }, (err, user, info) => {
                 if (err) {
                     return res.json({
-                        succes: 0
+                        success: 0,
+                        msg: err
                     });
                 }
 
@@ -18,6 +19,28 @@ module.exports = {
                     });
                 }
                 req.user = user;
+                next();
+            })(req, res, next);
+        }
+    },
+
+    jwtAuthenticate: () => {
+        return (req, res, next) => {
+            passport.authenticate('jwt', { session: false }, (err, user, info) => {
+                if (err) {
+                    return res.json({
+                        success: 0,
+                        msg: err
+                    });
+                }
+
+                if (!user) {
+                    return res.json({
+                        success: 0,
+                        msg: 'Zły token'
+                    });
+                }
+
                 next();
             })(req, res, next);
         }

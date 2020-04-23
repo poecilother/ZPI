@@ -12,13 +12,13 @@ passport.use(new JwtStrategy({
         const user = await User.findById(payload.sub);
 
         if (!user) {
-            return done(null, false);
+            return done(null, false, { message: 'Zły token' });
         }
 
         done(null, user);
         
     } catch(error) {
-        done(error, false)
+        done(error, false, { message: 'Zły token' })
     }
 }));
 

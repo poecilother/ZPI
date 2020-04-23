@@ -5,7 +5,7 @@ const { googleVerify } = require('../middlewares/googleVerify');
 const passport = require('passport');
 const passportConf = require('../passport');
 
-const { localAuthenticate } = require('../middlewares/passportCallback');
+const { localAuthenticate, jwtAuthenticate } = require('../middlewares/passportCallback');
 
 router.route('/signup')
     .post(validateBody(schemas.signUpSchema), UsersController.signUp);
@@ -23,6 +23,6 @@ router.route('/getnewtoken')
     .post(UsersController.getNewToken);
 
 router.route('/secret')
-    .get(passport.authenticate('jwt', { session: false }), UsersController.secret);
+    .get(jwtAuthenticate(), UsersController.secret);
 
 module.exports = router;
