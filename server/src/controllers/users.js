@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const User = require('../models/users');
 const RefreshToken = require('../models/refreshTokens');
 
@@ -145,7 +146,40 @@ module.exports = {
     },
 
     changePassword: async (req, res, next) => {
+        if(!req.body.token){
+            res.json({ success: 0 });
+        }
 
+        jwt.verify(req.body.token, process.env.JWT_SECRET, async (err, decodedToken) => {
+            if (err) {
+                res.json({ success: 0 });
+            } else {
+                req.userId = decodedToken.sub;
+
+                User.find({ '_id': req.userId }, async (err, user) => {
+                    if (user[0].method != 'google') {
+                        const salt = await bcrypt.genSalt(10);
+                        const newPassword = await bcrypt.hash(req.body.password, salt);
+
+                        User.update(
+                            { '_id': req.userId },
+                            { local: {
+                                username: user[0].local.username,
+                                email: user[0].local.email,
+                                password: newPassword
+                                }
+                            }
+                        , (err) => {
+                            if (err) {
+                                res.json({ err })
+                            } else {
+                                res.json({ success: 1 })
+                            }
+                        });
+                    } else { res.json({ success: 0 }) }
+                });
+            }
+        });
     },
 
     getNewToken: async (req, res, next) => {
