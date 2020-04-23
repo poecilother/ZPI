@@ -26,14 +26,14 @@ module.exports = {
         const foundUserUsername = await User.findOne({ 'local.username': username });
 
         if (foundUserUsername) { 
-            return res.status(403).json({ 
+            return res.json({ 
                 success: 0,
                 msg: 'Login jest już zajęty'
             });
         } 
 
         if (foundUserEmail) { 
-            return res.status(403).json({ 
+            return res.json({ 
                 success: 0,
                 msg: 'Email jest już zajęty' 
             });
