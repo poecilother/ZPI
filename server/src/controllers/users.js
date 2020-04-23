@@ -52,7 +52,7 @@ module.exports = {
             } 
         });
         await newUser.save();
-        
+
         res.status(200).json({
             success: 1,
             msg: 'Pomyślnie zarejestrowano'
@@ -69,6 +69,7 @@ module.exports = {
         await newRefreshToken.save();
 
         res.status(200).json({
+            success: 1,
             token,
             refToken,
             msg: 'Zalogowano'
