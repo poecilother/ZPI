@@ -37,8 +37,16 @@ module.exports = {
         }),
 
         signInSchema: Joi.object().keys({
-            username: Joi.string().required(),
-            password: Joi.string().required()
+            username: Joi.string().required().error(() => {
+                return {
+                    message: 'Nieprawidłowy login'
+                };
+            }),
+            password: Joi.string().required().error(() => {
+                return {
+                    message: 'Nieprawidłowe hasło'
+                };
+            })
         })
     }
 }

@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 const RefreshToken = require('../models/refreshTokens');
 
+const {OAuth2Client} = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_PLUS_ID);
+
 signToken = userId => {
     return jwt.sign({
         sub: userId
@@ -49,13 +52,7 @@ module.exports = {
             } 
         });
         await newUser.save();
-
-        const token = signToken(newUser._id);
-        const refToken = refreshToken(newUser._id);
-
-        const newRefreshToken = new RefreshToken({ token: refToken });
-        await newRefreshToken.save();
-
+        
         res.status(200).json({
             success: 1,
             msg: 'Pomyślnie zarejestrowano'
@@ -63,6 +60,8 @@ module.exports = {
     },
 
     signIn: async  (req, res, next) => {
+
+        console.log('user:'+ req.body.username)
         const token = signToken(req.user._id);
         const refToken = refreshToken(req.user._id);
 
@@ -78,16 +77,59 @@ module.exports = {
     },
 
     googleOAuth: async (req, res, next) => {
-        const token = signToken(req.user._id);
-        const refToken = refreshToken(req.user._id);
 
-        const newRefreshToken = new RefreshToken({ token: refToken });
-        await newRefreshToken.save();
-
-        res.status(200).json({
-            token,
-            refToken
-        });
+        async function verify() {
+            try {
+                const ticket = await client.verifyIdToken({
+                    idToken: req.body.idtoken,
+                    audience: process.env.GOOGLE_PLUS_ID
+                });
+                const payload = ticket.getPayload();
+                const userid = payload['sub'];
+                
+                if (!payload.email_verified) {
+                    return res.json({
+                        success: 0,
+                        msg: 'Niezweryfikowany email'
+                });
+                }
+    
+                const existingUser = await User.findOne({ 'google.id': userid });
+                let token = null;
+                let refToken = null;
+    
+                if (!existingUser) {
+                    const newUser = new User({
+                        method: 'google',
+                        google: {
+                            id: userid,
+                            username: payload.name
+                        }
+                    });
+    
+                    await newUser.save();
+    
+                    token = signToken(newUser._id);
+                    refToken = refreshToken(newUser._id);
+                } else {
+                    token = signToken(existingUser._id);
+                    refToken = refreshToken(existingUser._id);
+                }
+    
+                return res.json({
+                    success: 1,
+                    msg: 'Zalogowano',
+                    token,
+                    refToken
+                });
+            } catch (err) {
+                return res.json({
+                    success: 0,
+                    msg: 'Zły token'
+                });
+            }
+        }
+        verify().catch(console.error);
     },
 
     signOut: async (req, res, next) => {
@@ -119,5 +161,12 @@ module.exports = {
 
         const token = signToken(req.userId);
         res.status(200).json({ token });
+    },
+
+    secret: async (req, res, next) => {
+        res.status(200).json({
+            success: 1,
+            msg: 'Sekret'
+        });
     }
 };
