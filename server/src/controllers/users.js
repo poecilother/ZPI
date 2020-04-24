@@ -146,11 +146,13 @@ module.exports = {
     },
 
     changePassword: async (req, res, next) => {
-        if(!req.body.token){
+        req.header('authorization')
+
+        if(!req.header('authorization')){
             res.json({ success: 0 });
         }
 
-        jwt.verify(req.body.token, process.env.JWT_SECRET, async (err, decodedToken) => {
+        jwt.verify(req.header('authorization'), process.env.JWT_SECRET, async (err, decodedToken) => {
             if (err) {
                 res.json({ success: 0 });
             } else {
@@ -161,7 +163,7 @@ module.exports = {
                         const salt = await bcrypt.genSalt(10);
                         const newPassword = await bcrypt.hash(req.body.password, salt);
 
-                        User.update(
+                        User.updateOne(
                             { '_id': req.userId },
                             { local: {
                                 username: user[0].local.username,
