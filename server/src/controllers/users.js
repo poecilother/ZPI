@@ -227,11 +227,11 @@ module.exports = {
     },
 
     checkAccount: async (req, res, next) => {
-        if(!req.body.token){
+        if(!req.query.token){
             res.json({ success: 0 });
         }
 
-        jwt.verify(req.body.token, process.env.JWT_REFRESH_SECRET, (err, decodedToken) => {
+        jwt.verify(req.query.token, process.env.JWT_REFRESH_SECRET, (err, decodedToken) => {
             if (err) {
                 res.json({ success: 0 });
             } else {
