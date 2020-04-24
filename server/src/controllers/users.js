@@ -146,8 +146,6 @@ module.exports = {
     },
 
     changePassword: async (req, res, next) => {
-        req.header('authorization')
-
         if(!req.header('authorization')){
             res.json({ success: 0 });
         }
@@ -157,6 +155,7 @@ module.exports = {
                 res.json({ success: -1 });
             } else {
                 req.userId = decodedToken.sub;
+                console.log(decodedToken)
 
                 User.find({ '_id': req.userId }, async (err, user) => {
                     if (user[0].method != 'google') {
@@ -194,6 +193,8 @@ module.exports = {
     getNewToken: async (req, res, next) => {
         const isValid = RefreshToken.findOne({ token: req.query.token });
 
+        console.log(req.query)
+
         if (!isValid) {
             res.json({ success: 0 });
         }
@@ -202,7 +203,7 @@ module.exports = {
             if (err) {
                 res.json({ success: -1 });
             }
-            req.userId = decodedToken.id;
+            req.userId = decodedToken.sub;
         });
 
         const token = signToken(req.userId);
