@@ -178,7 +178,11 @@ module.exports = {
                                 res.json({ success: 1 })
                             }
                         });
-                    } else { res.json({ success: 0 }) }
+                    } else { res.json({
+                                success: 0,
+                                msg: 'Konto nie jest lokalne'
+                                })
+                            }
                 });
             }
         });
