@@ -17,7 +17,7 @@
           </a>
         </li>
         <li>
-          <a href="javascript:;" v-b-tooltip.hover title="Wyloguj">
+          <a href="javascript:;" v-b-tooltip.hover title="Wyloguj" @click="logout()">
             <i class="material-icons">exit_to_app</i>
           </a>
         </li>
@@ -38,6 +38,11 @@ export default {
     },
     showPopupSettings(){
       this.$store.commit('togglePopupSettings');
+    },
+    logout(){
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      this.$router.push('/')
     }
   }
 }

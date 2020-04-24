@@ -5,9 +5,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    api: 'https://cleanmail.herokuapp.com/',
     menu: 1,
     popupAddMail: 0,
     popupSettings: 0,
+    alertType: -1,
+    alertMsg: '',
   },
   mutations: {
     toggleMenu(state, payload){
@@ -26,6 +29,10 @@ export default new Vuex.Store({
       }else{
         state.popupSettings = 1;
       }
+    },
+    changeAlert(state, payload){
+      state.alertType = payload.type;
+      state.alertMsg = payload.msg;
     }
   },
   actions: {

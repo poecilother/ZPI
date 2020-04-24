@@ -1,13 +1,39 @@
 <template>
-  <div id="alert" class="error">
-    <h6>Podano błędny login lub hasło</h6>
+  <div id="alert" :class="{ success: type == 1, error: type == 0 }" v-if="show">
+    <h6>{{ msg }}</h6>
   </div>
 </template>
 
 <script>
 export default {
   name: 'Alert',
-
+  data(){
+    return{
+      show: 0,
+      timer: 0,
+    }
+  },
+  computed:{
+    type(){
+      return this.$store.state.alertType;
+    },
+    msg(){
+      return this.$store.state.alertMsg;
+    },
+  },
+  watch:{
+    type(){
+      if(this.type != -1){
+        this.show = 1;
+        let self = this;
+        clearTimeout(this.timer);
+        this.timer = setTimeout(function(){
+          self.show = 0;
+          self.$store.commit('changeAlert', { type: -1, msg: '' });
+        }, 3000);
+      }
+    }
+  }
 }
 </script>
 

@@ -3,6 +3,35 @@
     <router-view/>
   </div>
 </template>
+<script>
+import HeaderCore from '@/components/HeaderCore.vue'
+import HeaderSub from '@/components/HeaderSub.vue'
+import MenuCore from '@/components/MenuCore.vue'
+import Box from '@/components/Box.vue'
+import ButtonAdd from '@/components/ButtonAdd.vue'
+import PopupAddMail from '@/components/PopupAddMail.vue'
+import PopupSettings from '@/components/PopupSettings.vue'
+import Alert from '@/components/Alert.vue'
+
+export default {
+  name: 'App',
+  created(){
+    this.checkAuth();
+  },
+  beforeUpdate(){
+    this.checkAuth();
+  },
+  methods: {
+    checkAuth(){
+      if(localStorage.access_token === undefined && this.$router.currentRoute.name != 'Auth'){
+        this.$router.push('/');
+      }else if(localStorage.access_token !== undefined && this.$router.currentRoute.name == 'Auth'){
+        this.$router.push('/inbox');
+      }
+    }
+  }
+}
+</script>
 
 <style lang="scss">
   html { height: 100vh; }

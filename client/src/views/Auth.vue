@@ -15,18 +15,19 @@
       <section id="auth">
         <h2>{{ authTitle }}</h2>
         <div class="auth-login" v-if="auth == 1">
-          <input class="default" type="text" placeholder="Email">
-          <input class="default" type="password" placeholder="Hasło">
+          <input class="default" type="text" placeholder="Login" v-model="loginUsername">
+          <input class="default" type="password" placeholder="Hasło" v-model="loginPassword">
         </div>
         <div class="auth-register" v-if="auth == 2">
-          <input class="default" type="text" placeholder="Email">
-          <input class="default" type="password" placeholder="Hasło">
-          <input class="default" type="password" placeholder="Powtórz hasło">
+          <input class="default" type="text" placeholder="Login" v-model="registerUsername">
+          <input class="default" type="text" placeholder="Email" v-model="registerEmail">
+          <input class="default" type="password" placeholder="Hasło" v-model="registerPassword1">
+          <input class="default" type="password" placeholder="Powtórz hasło" v-model="registerPassword2">
         </div>
         <div class="auth-password" v-if="auth == 3">
           <input class="default" type="text" placeholder="Email">
         </div>
-        <button class="default">{{ authButton }}<i class="material-icons">keyboard_arrow_right</i></button>
+        <button class="default" @click="action()">{{ authButton }}<i class="material-icons">keyboard_arrow_right</i></button>
         <nav id="auth-links">
           <ul>
             <li>
@@ -37,7 +38,7 @@
             </li>
           </ul>
         </nav>
-        <button class="outer">zaloguj się przez google</button>
+        <button class="outer" @click="google()">zaloguj się przez google</button>
       </section>
     </div>
     <alert></alert>
@@ -65,7 +66,20 @@ export default {
       textButtonRemember: 'przypomnij',
       link1: '',
       link2: '',
+      route: '',
+      loginUsername: '',
+      loginPassword: '',
+      registerUsername: '',
+      registerEmail: '',
+      registerPassword1: '',
+      registerPassword2: '',
+      params: '',
     }
+  },
+  computed:{
+    api(){
+      return this.$store.state.api;
+    },
   },
   created(){
     this.authTitle = this.textLogin;
@@ -116,6 +130,69 @@ export default {
           this.link2 = this.textRemember;
         }
       }
+    },
+    action(){
+      let matchPasswords = 1;
+      if(this.auth == 1){
+        this.route = this.api + 'users/signin';
+        this.params = {
+          username: this.loginUsername,
+          password: this.loginPassword,
+        }
+      }else if(this.auth == 2){
+        this.route = this.api + 'users/signup';
+        this.params = {
+          username: this.registerUsername,
+          email: this.registerEmail,
+          password: this.registerPassword1,
+        }
+        if(this.registerPassword1 != this.registerPassword2){
+          matchPasswords = 0;
+        }
+      }else{
+        this.route = this.api + '';
+      }
+      if(matchPasswords){
+        let self = this;
+        this.axios.post(this.route, self.params)
+        .then(function (response) {
+          self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
+          if(response.data.success && self.auth == 2){
+            self.registerUsername = '';
+            self.registerEmail = '';
+            self.registerPassword1 = '';
+            self.registerPassword2 = '';
+            self.changeAuth(1);
+          }
+          if(self.auth == 1 && response.data.success == 1){
+            localStorage.setItem('access_token', response.data.token);
+            localStorage.setItem('refresh_token', response.data.refToken);
+            self.$router.push('/inbox')
+          }
+        })
+        .catch(function (error) {
+          self.$store.commit('changeAlert', { type: 0, msg: 'Brak połączenia z API. Spróbuj później.' });
+        })
+      }else{
+        this.$store.commit('changeAlert', { type: 0, msg: 'Podane hasła nie są ze sobą zgodne' });
+      }
+    },
+    async google(){
+      const googleUser = await this.$gAuth.signIn()
+      let idToken = await googleUser.getAuthResponse().id_token;
+      let self = this;
+      let response = await this.axios.post(this.api + 'users/oauth/google', { idtoken: idToken })
+      .then(function (response) {
+        console.log(response.data.refToken)
+        if(response.data.success == 1){
+            localStorage.setItem('access_token', response.data.token);
+            localStorage.setItem('refresh_token', response.data.refToken);
+            self.$router.push('/inbox')
+          }
+      })
+      .catch(function (error) {
+        self.$store.commit('changeAlert', { type: 0, msg: 'Brak autoryzacji Google. Spróbuj później.' });
+      })
     }
   }
 }
