@@ -154,7 +154,7 @@ module.exports = {
 
         jwt.verify(req.header('authorization'), process.env.JWT_SECRET, async (err, decodedToken) => {
             if (err) {
-                res.json({ success: 0 });
+                res.json({ success: -1 });
             } else {
                 req.userId = decodedToken.sub;
 
