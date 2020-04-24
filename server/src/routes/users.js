@@ -23,7 +23,7 @@ router.route('/changepassword')
     .post(UsersController.changePassword);
 
 router.route('/getnewtoken')
-    .post(UsersController.getNewToken);
+    .get(UsersController.getNewToken);
 
 router.route('/checkuser')
     .get(UsersController.checkUserRefToken);
