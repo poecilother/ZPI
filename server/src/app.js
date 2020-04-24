@@ -23,6 +23,8 @@ app.use(cors());
 
 // Routes
 app.use('/users', require('./routes/users'));
+app.use('/imap', require('./routes/imap'));
+app.use('/pop3', require('./routes/pop3'));
 
 
 app.get('/', (req, res) => { res.send('CleanMail server') });
