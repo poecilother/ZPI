@@ -200,7 +200,7 @@ module.exports = {
 
         jwt.verify(req.body.token, process.env.JWT_REFRESH_SECRET, (err, decodedToken) => {
             if (err) {
-                res.json({ success: 0 });
+                res.json({ success: -1 });
             }
             req.userId = decodedToken.id;
         });
