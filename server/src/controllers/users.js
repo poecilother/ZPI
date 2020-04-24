@@ -175,7 +175,10 @@ module.exports = {
                             if (err) {
                                 res.json({ err })
                             } else {
-                                res.json({ success: 1 })
+                                res.json({ 
+                                    success: 1,
+                                    msg: 'Pomyślnie zmieniono hasło'
+                                })
                             }
                         });
                     } else { res.json({
