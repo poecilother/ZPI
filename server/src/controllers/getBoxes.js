@@ -11,7 +11,6 @@ function getBoxData (req, res, next) {
 
             const foundUser = await User.findOne({ 
                 '_id':req.userId,
-                'mailBoxes.user': req.body.user
             }, 'mailBoxes');
 
             if (foundUser) {
