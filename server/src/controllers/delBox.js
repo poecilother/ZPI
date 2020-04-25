@@ -2,7 +2,7 @@ const Imap = require('imap');
 const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 
-function delBoxImap (req, res, next) {
+function delBox (req, res, next) {
     jwt.verify(req.header('authorization'), process.env.JWT_SECRET, async (err, decodedToken) => {
         if (err) {
             res.json({ success: -1 });
@@ -34,4 +34,4 @@ function delBoxImap (req, res, next) {
     });
 }
 
-module.exports = delBoxImap;
+module.exports = delBox;

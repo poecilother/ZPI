@@ -5,7 +5,6 @@ const inspect = require('util').inspect;
 const simpleParser = require('mailparser').simpleParser;
 
 const addBoxImap = require('../controllers/addBoxImap.js');
-const delBoxImap = require('../controllers/delBoxImap');
  
 var imap = new Imap({
     user: 'dfecica@wp.pl',
@@ -105,10 +104,6 @@ let email = {
 });
 
 router.post('/add', addBoxImap, function (req, res) {
-  res.json({ success: res.locals.success, msg: res.locals.msg })
-});
-
-router.delete('/del', delBoxImap, () => {
   res.json({ success: res.locals.success, msg: res.locals.msg })
 });
 
