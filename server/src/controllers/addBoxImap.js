@@ -8,7 +8,7 @@ function addBoxImap (req, res, next) {
         res.json({ success: -1 });
     } else {
         req.userId = decodedToken.sub;
-        
+
         let imap = new Imap({
           user: req.body.user,
           password: req.body.password,
@@ -22,7 +22,7 @@ function addBoxImap (req, res, next) {
             user: req.body.user,
             password: req.body.password,
             host: req.body.host
-          }});
+          }}, done);
   
           res.locals.success = 1;
           res.locals.msg = 'Dodano nową skrzynkę' 
