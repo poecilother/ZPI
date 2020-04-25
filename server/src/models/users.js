@@ -25,6 +25,21 @@ const userSchema = new Schema({
         },
         username: {
             type: String
+        },
+    },
+    mailBoxes: {
+        type: Array,
+        protocol: {
+            type: String
+        },
+        user: {
+            type: String
+        },
+        password: {
+            type: String
+        },
+        host: {
+            type: String
         }
     }
 }, {

@@ -155,7 +155,6 @@ module.exports = {
                 res.json({ success: -1 });
             } else {
                 req.userId = decodedToken.sub;
-                console.log(decodedToken)
 
                 User.find({ '_id': req.userId }, async (err, user) => {
                     if (user[0].method != 'google') {
