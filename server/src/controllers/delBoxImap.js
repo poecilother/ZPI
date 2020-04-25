@@ -19,7 +19,10 @@ function delBoxImap (req, res, next) {
                     if (err) {
                         return res.send(err);
                     }
-                    return res.json(model);
+                    return res.json({
+                        success: 1,
+                        msg: 'Skrzynka została usunięta'
+                    });
                 });
             } else {
                 res.json({

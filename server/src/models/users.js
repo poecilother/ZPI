@@ -43,8 +43,7 @@ const userSchema = new Schema({
         },
         level: {
             type: Number,
-            enum: [1, 2, 3],
-            default: 2
+            enum: [1, 2, 3]
         }
     }
 }, {

@@ -41,7 +41,7 @@ function addBoxImap (req, res, next) {
             user: req.body.user,
             password: req.body.password,
             host: req.body.host,
-            level: req.body.level
+            level: 2
           }}});
   
           res.locals.success = 1;
