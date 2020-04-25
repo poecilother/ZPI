@@ -17,12 +17,24 @@ function addBoxImap (req, res, next) {
           tls: true
         });
         imap.once('ready', async function() {
-          User.update( { '_id':req.userId }, { $push: {
-            protocol: imap,
+          const foundUser = await User.findOne({ 
+            '_id':req.userId,
+            'mailBoxes.user': req.body.user
+          });
+
+          if (foundUser) {
+            return res.json({
+              success: 0,
+              msg: 'Skrzynka o takim adresie jest już zapisana'
+            });
+          }
+
+          await User.updateOne( { '_id':req.userId }, { $push: { mailBoxes: {
+            protocol: 'imap',
             user: req.body.user,
             password: req.body.password,
             host: req.body.host
-          }}, done);
+          }}});
   
           res.locals.success = 1;
           res.locals.msg = 'Dodano nową skrzynkę' 
