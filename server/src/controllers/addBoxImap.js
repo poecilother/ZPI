@@ -3,6 +3,13 @@ const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 
 function addBoxImap (req, res, next) {
+  if (!req.body.user || !req.body.password || !req.body.host) {
+    return res.json({
+      success: 0,
+      msg: 'Nie wszystkie pola są wypełnione'
+    });
+  }
+
   jwt.verify(req.header('authorization'), process.env.JWT_SECRET, async (err, decodedToken) => {
     if (err) {
         res.json({ success: -1 });
@@ -33,7 +40,8 @@ function addBoxImap (req, res, next) {
             protocol: 'imap',
             user: req.body.user,
             password: req.body.password,
-            host: req.body.host
+            host: req.body.host,
+            level: req.body.level
           }}});
   
           res.locals.success = 1;

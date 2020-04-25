@@ -40,6 +40,11 @@ const userSchema = new Schema({
         },
         host: {
             type: String
+        },
+        level: {
+            type: Number,
+            enum: [1, 2, 3],
+            default: 2
         }
     }
 }, {
