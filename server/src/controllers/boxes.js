@@ -14,7 +14,10 @@ function getBoxData (req, res, next) {
             }, 'mailBoxes');
 
             if (foundUser) {
-                return res.send(foundUser.mailBoxes);
+                return res.json({
+                    success: 1,
+                    boxes: foundUser.mailBoxes
+                });
             } else {
                 res.json({
                     success: 0,

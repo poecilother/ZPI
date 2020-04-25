@@ -1,4 +1,6 @@
 const POP3Client = require("mailpop3");
+const User = require('../models/users');
+const jwt = require('jsonwebtoken');
 
 function addBoxPop3(req, res, next){
   if (!req.body.user || !req.body.password || !req.body.host) {
