@@ -48,7 +48,7 @@ function addBoxPop3(req, res, next){
             }
   
             await User.updateOne( { '_id':req.userId }, { $push: { mailBoxes: {
-              protocol: 'imap',
+              protocol: 'pop3',
               user: req.body.user,
               password: req.body.password,
               host: req.body.host,
