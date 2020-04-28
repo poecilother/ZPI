@@ -1,11 +1,27 @@
 const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 
-function delBox (req, res, next) {
-    if (!req.body.user) {
+function changeLevel (req, res, next) {
+    if (!req.body.user || !req.body.level) {
         return res.json({
             success: 0,
-            msg: 'Podaj adres skrzynki do usunięcia'
+            msg: 'Nie wszystkie pola są wypełnione'
+        });
+    }
+
+    if (req.body.level < 1 || req.body.level > 3){
+        return res.json({
+            success: 0,
+            msg: 'Niepoprawny poziom'
+        });
+    }
+    
+    let x = parseFloat(req.body.level);
+
+    if (isNaN(x) || !(parseInt(Number(x)) == x)){
+        return res.json({
+            success: 0,
+            msg: 'Niepoprawny poziom'
         });
     }
 
@@ -21,13 +37,16 @@ function delBox (req, res, next) {
             });
 
             if (foundUser) {
-                User.updateOne({ '_id':req.userId }, { $pull: { mailBoxes: { user: req.body.user }}}, (err, model) => {
+                User.updateOne({ 
+                    '_id':req.userId,
+                    'mailBoxes.user': req.body.user
+                }, { $set: { 'mailBoxes.$.level': parseFloat(req.body.level) }}, (err, model) => {
                     if (err) {
                         return res.send(err);
                     }
                     return res.json({
                         success: 1,
-                        msg: 'Skrzynka została usunięta'
+                        msg: 'Zaktualizowano poziom filtra spamu'
                     });
                 });
             } else {
@@ -40,4 +59,4 @@ function delBox (req, res, next) {
     });
 }
 
-module.exports = delBox;
+module.exports = changeLevel;

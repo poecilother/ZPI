@@ -18,7 +18,7 @@ refreshToken = userId => {
     return jwt.sign({
         sub: userId
     }, process.env.JWT_REFRESH_SECRET, {
-        expiresIn: '30d'
+        expiresIn: '30 days'
     });
 };
 
@@ -163,12 +163,7 @@ module.exports = {
 
                         User.updateOne(
                             { '_id': req.userId },
-                            { local: {
-                                username: user[0].local.username,
-                                email: user[0].local.email,
-                                password: newPassword
-                                }
-                            }
+                            { 'local.password': newPassword }
                         , (err) => {
                             if (err) {
                                 res.json({ err })
@@ -191,8 +186,6 @@ module.exports = {
 
     getNewToken: async (req, res, next) => {
         const isValid = RefreshToken.findOne({ token: req.query.token });
-
-        console.log(req.query)
 
         if (!isValid) {
             res.json({ success: 0 });

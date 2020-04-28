@@ -11,7 +11,7 @@ function getBoxData (req, res, next) {
 
             const foundUser = await User.findOne({ 
                 '_id':req.userId,
-            }, 'mailBoxes');
+            }, ['mailBoxes.protocol', 'mailBoxes.user', 'mailBoxes.host', 'mailBoxes.level']);
 
             if (foundUser) {
                 return res.json({
@@ -21,7 +21,7 @@ function getBoxData (req, res, next) {
             } else {
                 res.json({
                     success: 0,
-                    msg: 'Nie ma skrzynki o takim adresie'
+                    msg: 'Brak skrzynek'
                 });
             }
         }
