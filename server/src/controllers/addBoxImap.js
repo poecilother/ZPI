@@ -21,7 +21,10 @@ function addBoxImap (req, res, next) {
           password: req.body.password,
           host: req.body.host,
           port: 993,
-          tls: true
+          tls: true,
+          tlsOptions: {
+            rejectUnauthorized: false
+          }
         });
         imap.once('ready', async function() {
           const foundUser = await User.findOne({ 
