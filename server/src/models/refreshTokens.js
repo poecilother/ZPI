@@ -10,7 +10,7 @@ const tokenSchema = new Schema({
     timestamps: { createdAt: true, updatedAt: false }
 });
 
-tokenSchema.index( { createdAt: 1 }, { expireAfterSeconds: 18000 } );
+tokenSchema.index( { createdAt: 1 }, { expireAfterSeconds: 2592000 } );
 
 const RefreshToken = mongoose.model('refreshToken', tokenSchema);
 
