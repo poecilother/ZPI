@@ -11,7 +11,10 @@ var imap = new Imap({
     password: '2j0!M2dGa&v%',
     host: 'imap.wp.pl',
     port: 993,
-    tls: true
+    tls: true,
+    tlsOptions: {
+      rejectUnauthorized: false
+    }
 });
 
 router.get('/', function (req, res) {
