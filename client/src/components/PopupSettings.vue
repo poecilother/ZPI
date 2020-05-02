@@ -8,64 +8,24 @@
           <i class="material-icons">close</i>
         </div>
       </header>
-      <h5 class="section-header">Zarządzanie skrzynkami</h5>
-      <section class="mailboxes">
-        <div class="mailbox outlook">
-          <button class="delete"><i class="material-icons">delete</i></button>
-          <h3>suchyy</h3>
-          <div class="spam-level" v-b-tooltip.hover title="Poziom filtrowania spamu">
-            <button class="active">easy</button>
-            <button>medium</button>
-            <button>hard</button>
+      <h5 class="section-header" v-if="boxes.length != 0">Zarządzanie skrzynkami</h5>
+      <section class="mailboxes" v-if="boxes.length != 0">
+        <div class="mailbox" :class="{ outlook: getHost(box.user) == 'outlook', gmail: getHost(box.user) == 'gmail'}" v-for="box in boxes" :key="box.user">
+          <button class="delete" v-b-tooltip.hover title="Usuń" @click="del(box.user)"><i class="material-icons">delete</i></button>
+          <h3>{{ getUserLogin(box.user) }}</h3>
+          <div class="spam-level">
+            <button v-b-tooltip.hover title="Podstawowe filtrowanie spamu" :class="{ active: box.level == 1 }" @click="changeLevel(1, box.level, box.user)">easy</button>
+            <button v-b-tooltip.hover title="Średniozaawansowane filtrowanie spamu" :class="{ active: box.level == 2 }" @click="changeLevel(2, box.level, box.user)">medium</button>
+            <button v-b-tooltip.hover title="Zaawansowane filtrowanie spamu" :class="{ active: box.level == 3 }" @click="changeLevel(3, box.level, box.user)">hard</button>
           </div>
-          <h5>Outlook</h5>
-        </div>
-        <div class="mailbox outlook">
-          <button class="delete"><i class="material-icons">delete</i></button>
-          <h3>suchyy</h3>
-          <div class="spam-level" v-b-tooltip.hover title="Poziom filtrowania spamu">
-            <button>easy</button>
-            <button class="active">medium</button>
-            <button>hard</button>
-          </div>
-          <h5>Outlook</h5>
-        </div>
-        <div class="mailbox outlook">
-          <button class="delete"><i class="material-icons">delete</i></button>
-          <h3>suchyy</h3>
-          <div class="spam-level" v-b-tooltip.hover title="Poziom filtrowania spamu">
-            <button>easy</button>
-            <button>medium</button>
-            <button class="active">hard</button>
-          </div>
-          <h5>Outlook</h5>
-        </div>
-        <div class="mailbox outlook">
-          <button class="delete"><i class="material-icons">delete</i></button>
-          <h3>suchyy</h3>
-          <div class="spam-level" v-b-tooltip.hover title="Poziom filtrowania spamu">
-            <button class="active">easy</button>
-            <button>medium</button>
-            <button>hard</button>
-          </div>
-          <h5>Outlook</h5>
-        </div>
-        <div class="mailbox outlook">
-          <button class="delete"><i class="material-icons">delete</i></button>
-          <h3>suchyy</h3>
-          <div class="spam-level" v-b-tooltip.hover title="Poziom filtrowania spamu">
-            <button class="active">easy</button>
-            <button>medium</button>
-            <button>hard</button>
-          </div>
-          <h5>Outlook</h5>
+          <h5>{{ getHost(box.user) }}</h5>
         </div>
       </section>
-      <h5 class="section-header">Zmiana hasła</h5>
-      <section class="password">
-        <input class="default" type="password" placeholder="Nowe hasło">
-        <input class="default" type="password" placeholder="Powtórz hasło">
-        <button class="default">zmień<i class="material-icons">edit</i></button>
+      <h5 class="section-header" v-if="local == 1">Zmiana hasła</h5>
+      <section class="password" v-if="local == 1">
+        <input class="default" type="password" placeholder="Nowe hasło" v-model="password1" @keyup.enter="changePassword()">
+        <input class="default" type="password" placeholder="Powtórz hasło" v-model="password2" @keyup.enter="changePassword()">
+        <button class="default" @click="changePassword()">zmień<i class="material-icons">edit</i></button>
       </section>
     </div>
   </div>
@@ -76,17 +36,153 @@ export default {
   name: 'PopupSettings',
   data(){
     return{
+      local: 0,
+      password1: '',
+      password2: '',
+      boxes: '',
+      user: '',
+      level: 0,
     }
   },
   computed:{
+    api(){
+      return this.$store.state.api;
+    },
+    newToken(){
+      return this.$store.state.newToken;
+    },
     showPopup(){
       return this.$store.state.popupSettings;
+    },
+    reloadBoxes(){
+      return this.$store.state.reloadBoxes;
+    }
+  },
+  created(){
+    this.getBoxesApi();
+    let self = this;
+    this.axios.get(this.api + 'users/checkaccount', { params: { token: localStorage.refresh_token } })
+    .then(function (response) {
+      if(response.data.account == 'local'){
+        self.local = 1;
+        self.$store.commit('changeAccountType', 1);
+      }else{
+        self.local = 0;
+        self.$store.commit('changeAccountType', 0);
+      }
+    })
+    console.log(localStorage.access_token)
+  },
+  watch:{
+    newToken(){
+      if(this.newToken == -2){
+        this.changePasswordApi();
+      }else if(this.newToken == -4){
+        this.getBoxesApi();
+      }else if(this.newToken == -5){
+        this.delApi();
+      }else if(this.newToken == -7){
+        this.changeLevelApi();
+      }
+    },
+    showPopup(){
+      this.getBoxesApi();
+    },
+    reloadBoxes(){
+      this.getBoxesApi();
     }
   },
   methods: {
     closePopup(){
       this.$store.commit('togglePopupSettings');
     },
+    changePassword(){
+      if(this.password1 == '' || this.password2 == ''){
+        this.$store.commit('changeAlert', { type: 0, msg: 'Hasła nie mogą być puste' });
+      }else if(this.password1 != this.password2){
+        this.$store.commit('changeAlert', { type: 0, msg: 'Hasła nie są ze sobą zgodne.' });
+      }else{
+        this.changePasswordApi();
+      }
+    },
+    getBoxesApi(){
+      let self = this;
+      this.axios.get(this.api + 'mail/boxes', { headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 4);
+        }else{
+          self.$store.commit('getNewToken', 0);
+          self.boxes = response.data.boxes;
+          self.$store.commit('changeBoxesCount', self.boxes.length);
+        }
+      });
+    },
+    changePasswordApi(){
+      let self = this;
+      this.axios.post(this.api + 'users/changepassword', { password: this.password1 }, { headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 2);
+        }else{
+          console.log(23)
+          self.$store.commit('getNewToken', 0);
+          self.password1 = '';
+          self.password2 = '';
+          self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
+        }
+      });
+    },
+    del(user){
+      this.user = user;
+      this.delApi();
+    },
+    delApi(){
+      let self = this;
+      this.axios.delete(this.api + 'mail/del', {data: { user: this.user }, headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 5);
+        }else{
+          self.$store.commit('getNewToken', 0);
+          self.getBoxesApi();
+          self.$store.commit('changeReloadBoxes');
+          //self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
+        }
+      });
+    },
+    changeLevel(level, boxLevel, user){
+      if(level !== boxLevel){
+        this.level = level;
+        this.user = user;
+        this.changeLevelApi();
+      }
+    },
+    changeLevelApi(){
+      let self = this;
+      this.axios.post(this.api + 'mail/changelevel', { user: this.user, level: this.level }, { headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 7);
+        }else{
+          self.$store.commit('getNewToken', 0);
+          self.getBoxesApi();
+        }
+      });
+    },
+    getUserLogin(user){
+      let index = user.indexOf("@");
+      let login = user.substring(0, index);
+      return login;
+    },
+    getHost(user){
+      let index = user.indexOf("@");
+      let len = user.length;
+      let host = user.substring(index + 1, len - 1);
+      index = host.indexOf(".");
+      host = host.substring(0, index);
+      return host;
+    }
   }
 }
 </script>
@@ -98,8 +194,9 @@ export default {
   div#popup-settings div.container section.mailboxes { display: flex; flex-wrap: wrap; padding: 0; }
   div#popup-settings div.container section.mailboxes button:focus { outline: 0; }
   div#popup-settings div.container section.mailboxes div.mailbox { display: flex; flex-direction: column; width: 200px; height: 175px; margin: 20px 0 40px 40px; padding: 10px; 
-  background: rgba(0, 0, 0, 0.2); border-radius: 5px; border: 1px solid rgba(0, 0, 0, 0.05); }
+   border-radius: 5px; border: 1px solid rgba(0, 0, 0, 0.05); background: url('../assets/mail-other-24.png') no-repeat 10px 10px; }
   div#popup-settings div.container section.mailboxes div.mailbox.outlook { background: url('../assets/mail-outlook-24.png') no-repeat 10px 10px; border: 1px solid rgba(0, 0, 0, 0.05); }
+  div#popup-settings div.container section.mailboxes div.mailbox.gmail { background: url('../assets/mail-gmail-24.png') no-repeat 10px 10px; border: 1px solid rgba(0, 0, 0, 0.05); }
   div#popup-settings div.container section.mailboxes button.delete { display: block; height: 24px; margin: 0 0 0 auto; padding: 0; border: 0; background: 0; }
   div#popup-settings div.container section.mailboxes button.delete i.material-icons { font-size: 24px; color: rgba(0, 0, 0, 0.2); }
   div#popup-settings div.container section.mailboxes button.delete:hover i.material-icons { font-size: 24px; color: rgba(0, 0, 0, 0.6); }
@@ -117,7 +214,7 @@ export default {
     color: rgba(255, 255, 255, 0.8); }
   div#popup-settings div.container section.mailboxes div.spam-level button:last-child:hover { background: linear-gradient(90deg,rgba(62,33,139,1) 0%, rgba(50,38,148,1) 100%,); }
   div#popup-settings div.container section.mailboxes div.spam-level button.active:last-child { background: linear-gradient(90deg,rgba(62,33,139,1) 0%, rgba(50,38,148,1) 100%,); }
-  div#popup-settings div.container section.mailboxes h5 { margin: 10px 0 0 0; padding: 0; text-align: right; font-size: 11px; color: rgba(0, 0, 0, 0.2); }
+  div#popup-settings div.container section.mailboxes h5 { margin: 10px 0 0 0; padding: 0; text-align: right; font-size: 11px; color: rgba(0, 0, 0, 0.2); text-transform: capitalize;}
   div#popup-settings div.container section.password { padding: 20px 40px; }
   div#popup-settings div.container section.password input, div#popup-settings div.container section.password button { width: 300px; }
 

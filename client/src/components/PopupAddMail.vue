@@ -20,10 +20,10 @@
         <button :class="{ active: protocol == 1 }" v-b-tooltip.hover title="Wybierz protokół" @click="changeProtocol(1)">pop3</button>
       </section>
       <section class="auth">
-        <input class="default" type="text" placeholder="Adres serwera" v-model="address" v-if="addressShow">
-        <input class="default" type="text" placeholder="Email" v-model="email">
-        <input class="default" type="password" placeholder="Hasło" v-model="password">
-        <button class="default">dodaj<i class="material-icons">keyboard_arrow_right</i></button>
+        <input class="default" type="text" placeholder="Adres serwera" v-model="address" v-if="addressShow" @keyup.enter="add()">
+        <input class="default" type="text" placeholder="Email" v-model="email" @keyup.enter="add()">
+        <input class="default" type="password" placeholder="Hasło" v-model="password" @keyup.enter="add()">
+        <button class="default" @click="add()">dodaj<i class="material-icons">keyboard_arrow_right</i></button>
       </section>
     </div>
   </div>
@@ -43,8 +43,21 @@ export default {
     }
   },
   computed:{
+    api(){
+      return this.$store.state.api;
+    },
+    newToken(){
+      return this.$store.state.newToken;
+    },
     showPopup(){
       return this.$store.state.popupAddMail;
+    }
+  },
+  watch:{
+    newToken(){
+      if(this.newToken == -3){
+        this.add();
+      }
     }
   },
   methods: {
@@ -61,6 +74,59 @@ export default {
     },
     changeProtocol(id){
       this.protocol = id;
+    },
+    getAddress(){
+      switch(this.mailbox){
+        case 0:
+          if(this.protocol){
+            return 'outlook.office365.com';
+          }else{
+            return 'outlook.office365.com'
+          }
+        break
+        case 1:
+          if(this.protocol){
+            return 'pop.gmail.com';
+          }else{
+            return 'imap.gmail.com';
+          }
+        break
+        case 2:
+          return this.address;
+        break
+        default:
+          return this.address;
+      }
+    },
+    add(){
+      let address = this.getAddress();
+      let route = '';
+      if(this.protocol){
+        route = 'mail/pop3/add'
+      }else{
+        route = 'mail/imap/add'
+      }
+      this.addApi(route, address)
+    },
+    addApi(route, address){
+      this.$store.commit('changeAlert', { type: 2, msg: 'Czekaj...' });
+      self = this;
+      this.axios.post(this.api + route, { host: address, user: this.email, password: this.password }, { headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 3);
+        }else if(response.data.success == 1){
+          self.address = '';
+          self.email = '';
+          self.password = '';
+          self.$store.commit('changeReloadBoxes');
+          self.$store.commit('getNewToken', 0);
+          self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
+        }else{
+          self.$store.commit('getNewToken', 0);
+          self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
+        }
+      });
     }
   }
 }

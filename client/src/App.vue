@@ -15,11 +15,26 @@ import Alert from '@/components/Alert.vue'
 
 export default {
   name: 'App',
+  computed:{
+    api(){
+      return this.$store.state.api;
+    },
+    newToken(){
+      return this.$store.state.newToken;
+    }
+  },
   created(){
     this.checkAuth();
   },
   beforeUpdate(){
     this.checkAuth();
+  },
+  watch:{
+    newToken(){
+      if(this.newToken != 0 && this.newToken > 0){
+        this.getNewToken();
+      }
+    }
   },
   methods: {
     checkAuth(){
@@ -27,7 +42,31 @@ export default {
         this.$router.push('/');
       }else if(localStorage.access_token !== undefined && this.$router.currentRoute.name == 'Auth'){
         this.$router.push('/inbox');
+      }else if(localStorage.refresh_token !== undefined){
+        let self = this;
+        this.axios.get(this.api + 'users/checkaccount', { params: { token: localStorage.refresh_token } })
+        .then(function (response) {
+          if(respose.data.success == 0){
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            this.$router.push('/')
+          }
+        })
+        .catch(function (error) {
+          self.$router.push('/');
+        })
       }
+    },
+    getNewToken(){
+      let self = this;
+      this.axios.get(this.api + 'users/getnewtoken', { params:  { token: localStorage.refresh_token } })
+      .then(function (response) {
+        if(response.data.token !== undefined){
+          localStorage.setItem('access_token', response.data.token)
+          self.$store.commit('getNewToken', self.newToken * -1);
+          console.log(localStorage.access_token)
+        }
+      })
     }
   }
 }

@@ -156,18 +156,20 @@ export default {
         let self = this;
         this.axios.post(this.route, self.params)
         .then(function (response) {
-          self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
+          if(self.auth == 2 || (self.auth == 1 && response.data.success == 0)){
+            self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
+          }
+          if(self.auth == 1 && response.data.success == 1){
+            localStorage.setItem('access_token', response.data.token);
+            localStorage.setItem('refresh_token', response.data.refToken);
+            self.$router.push('/inbox')
+          }
           if(response.data.success && self.auth == 2){
             self.registerUsername = '';
             self.registerEmail = '';
             self.registerPassword1 = '';
             self.registerPassword2 = '';
             self.changeAuth(1);
-          }
-          if(self.auth == 1 && response.data.success == 1){
-            localStorage.setItem('access_token', response.data.token);
-            localStorage.setItem('refresh_token', response.data.refToken);
-            self.$router.push('/inbox')
           }
         })
         .catch(function (error) {

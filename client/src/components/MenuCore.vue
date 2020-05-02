@@ -28,8 +28,8 @@
         </li>
       </ul>
     </div>
-    <div class="mail">
-      <h3 class="outlook">242999</h3>
+    <div class="mail" v-for="box in boxes" :key="box.user">
+      <h3 :class="{ outlook: getHost(box.user) == 'outlook', gmail: getHost(box.user) == 'gmail',}">{{ getUserLogin(box.user) }}</h3>
       <ul>
         <li class="active">
           <i class="material-icons">inbox</i>
@@ -48,38 +48,76 @@
         </li>
       </ul>
     </div>
-    <div class="mail">
-      <h3 class="gmail">suchyy</h3>
-      <ul>
-        <li>
-          <i class="material-icons">inbox</i>
-          <h4>Skrzynka odbiorcza</h4>
-        </li>
-        <li>
-          <i class="material-icons">report</i>
-          <h4>Spam</h4>
-        </li>
-        <li>
-          <i class="material-icons">delete</i>
-          <h4>Usunięte</h4>
-        </li>
-      </ul>
-    </div>
   </menu>
 </template>
 
 <script>
 export default {
   name: 'MenuCore',
+  data(){
+    return{
+      boxes: ''
+    }
+  },
   computed: {
+    api(){
+      return this.$store.state.api;
+    },
+    newToken(){
+      return this.$store.state.newToken;
+    },
     menu () {
       return this.$store.state.menu;
     },
+    reloadBoxes(){
+      return this.$store.state.reloadBoxes;
+    }
+  },
+  created(){
+    this.getBoxesApi();
+  },
+  watch:{
+    newToken(){
+      if(this.newToken == -6){
+        this.getBoxesApi();
+      }
+    },
+    showPopup(){
+      this.getBoxesApi();
+    },
+    reloadBoxes(){
+      this.getBoxesApi();
+    }
   },
   methods:{
     closeMenu(){
       this.$store.commit('toggleMenu', 0);
     },
+    getBoxesApi(){
+      let self = this;
+      this.axios.get(this.api + 'mail/boxes', { headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 6);
+        }else{
+          self.$store.commit('getNewToken', 0);
+          self.boxes = response.data.boxes;
+        }
+      });
+    },
+    getUserLogin(user){
+      let index = user.indexOf("@");
+      let login = user.substring(0, index);
+      return login;
+    },
+    getHost(user){
+      let index = user.indexOf("@");
+      let len = user.length;
+      let host = user.substring(index + 1, len - 1);
+      index = host.indexOf(".");
+      host = host.substring(0, index);
+      return host;
+    }
   }
 }
 </script>
@@ -92,7 +130,8 @@ export default {
   menu.core header div:hover { background: $blue; }
   menu.core header div i.material-icons { color: rgba(255, 255, 255, 0.9); font-size: 25px; color: rgba(0, 0, 0, 0.8); }
   menu.core header div:hover i.material-icons { color: #fff; }
-  menu.core div.mail h3 { height: 50px; margin: 0; padding: 0 0 0 64px; line-height: 50px; color: rgba(255, 255, 255, 0.9); font-size: 17px; font-weight: 400; }
+  menu.core div.mail h3 { height: 50px; margin: 0; padding: 0 0 0 64px; line-height: 50px; color: rgba(255, 255, 255, 0.9); font-size: 17px; font-weight: 400; 
+    background: url('../assets/mail-other-24.png') no-repeat 20px 50%, $purpleDark; }
   menu.core div.mail h3.all { background: url('../assets/mail-all-24.png') no-repeat 20px 50%, $purpleDark; }
   menu.core div.mail h3.outlook { background: url('../assets/mail-outlook-24.png') no-repeat 20px 50%, $purpleDark; }
   menu.core div.mail h3.gmail { background: url('../assets/mail-gmail-24.png') no-repeat 20px 50%, $purpleDark; }
