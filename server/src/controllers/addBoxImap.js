@@ -46,7 +46,7 @@ function addBoxImap (req, res, next) {
             host: req.body.host,
             level: 2
           }}});
-  
+
           res.locals.success = 1;
           res.locals.msg = 'Dodano nową skrzynkę' 
           next();

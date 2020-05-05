@@ -64,7 +64,7 @@ export default {
       textButtonRegister: 'zarejestruj',
       textButtonRemember: 'przypomnij',
       link1: '',
-      link2: '',
+      link2: ''
     }
   },
   created(){
