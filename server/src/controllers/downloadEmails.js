@@ -1,4 +1,5 @@
 const User = require('../models/users');
+const Mail = require('../models/mails');
 const jwt = require('jsonwebtoken');
 const downloadEmailsImap = require('../middlewares/downloadEmailsImap');
 const downloadEmailsPop3 = require('../middlewares/downloadEmailsPop3');
@@ -29,7 +30,6 @@ async function downloadEmails (req, res) {
         } else {
             console.log('Pop3');
             downloadEmailsPop3(userData).then(emails => {
-                console.log(emails)
                 return res.json(emails);
             });
         }
@@ -39,6 +39,10 @@ async function downloadEmails (req, res) {
             msg: 'Brak skrzynek'
         });
     }
+};
+
+async function addToDatabase(emails) {
+
 }
 
 module.exports = downloadEmails

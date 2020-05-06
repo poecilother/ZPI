@@ -3,6 +3,10 @@ const simpleParser = require('mailparser').simpleParser;
 
 async function downloadEmailsPop3 (pop3Data) {
     return new Promise((resolve, reject) => {
+
+        let number = 0;
+        let counter = 1;
+
         let emails = Array();
 
         var POP3Client = require("mailpop3");
@@ -63,12 +67,11 @@ async function downloadEmailsPop3 (pop3Data) {
             } else {
         
                 console.log("LIST success with " + msgcount + " element(s)");
-        
-                if (msgcount > 0)
-                    client.retr(msgcount);
-                else
-                    client.quit();
-        
+                number = msgcount;
+
+                if (msgcount > 0) {
+                    client.retr(counter);
+                }
             }
         });
         
@@ -93,9 +96,16 @@ async function downloadEmailsPop3 (pop3Data) {
                     newEmail.body.textAsHtml = mail.textAsHtml;
                     emails.push(newEmail);
                     console.log('TEMAT: ' + newEmail.subject);
+                    
+                    if (counter == number) {
+                        client.quit();
+                    } else {
+                        client.retr(counter);
+                    }
+                    counter++;
                 });
                 //client.dele(msgnumber);
-                client.quit();
+                
         
             } else {
         
