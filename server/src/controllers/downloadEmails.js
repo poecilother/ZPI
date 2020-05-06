@@ -28,7 +28,7 @@ async function downloadEmails (req, res) {
             });
         } else {
             console.log('Pop3');
-            downloadEmailsPop3.downloadEmailsPop3(userData).then(emails => {
+            downloadEmailsPop3(userData).then(emails => {
                 console.log(emails)
                 return res.json(emails);
             });

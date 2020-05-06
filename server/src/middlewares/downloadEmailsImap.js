@@ -12,7 +12,7 @@ async function downloadEmailsImap(imapData) {
             tls: true
         });
     
-        let emails = { count: 0, content: Array() };
+        let emails = Array();
         let email = { 
             from: {
                 address: '',
@@ -45,20 +45,25 @@ async function downloadEmailsImap(imapData) {
                     
                         msg.on('body', function(stream, info) {
                             simpleParser(stream, (err, mail) => {
+                                let newEmail = createEmail();
                                 //console.log(prefix + mail.subject);
                                 //console.log(prefix + mail.text);
                                 console.log(mail.subject);
                                 //console.log(mail.textAsHtml);
                                 //console.log(mail.html)
-                                email.from.address = mail.from.value[0].address;
-                                email.from.name = mail.from.value[0].name;
-                                email.date = mail.date;
-                                email.subject = mail.subject;
-                                email.body.text = mail.text;
-                                email.body.html = mail.html;
-                                email.body.textAsHtml = mail.textAsHtml;
-                                emails.content.push(email);
-                                emails.count += 1;
+                                newEmail.from.address = mail.from.value[0].address;
+                                newEmail.from.name = mail.from.value[0].name;
+                                newEmail.date = mail.date;
+                                newEmail.subject = mail.subject;
+                                newEmail.body.text = mail.text;
+                                newEmail.body.html = mail.html;
+                                newEmail.body.textAsHtml = mail.textAsHtml;
+                                console.log('TEMAT: ' + email.subject);
+                                emails.push(newEmail);
+                                if(done){
+                                    console.log('Returning emails')
+                                    return resolve(emails);
+                                }
                             });
                         });
     
@@ -78,7 +83,6 @@ async function downloadEmailsImap(imapData) {
                         console.log('Done fetching all messages!');
                         done = 1;
                         imap.end();
-                        return resolve(emails);
                     });
                 });
             });
@@ -95,6 +99,23 @@ async function downloadEmailsImap(imapData) {
     
         imap.connect();      
     });
-}
+};
+
+function createEmail() {
+    let newEmail = { 
+        from: {
+            address: '',
+            name: ''
+        }, 
+        date: '', 
+        flags: '', 
+        subject: '', 
+        body: {
+            text: '',
+            html: '',
+            textAsHtml: '',
+        } };
+    return newEmail;
+};
 
 module.exports = downloadEmailsImap;
