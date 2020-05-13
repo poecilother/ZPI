@@ -2,14 +2,14 @@ const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 
 async function getMails (req, res, next) {
-    if (!req.body.user) {
+    if (!req.query.user) {
         return res.json({
             success: 0,
             msg: 'Brak adresu skrzynki'
         });
     }
 
-    if (!req.body.folder) {
+    if (!req.query.folder) {
         return res.json({
             success: 0,
             msg: 'Brak numeru folderu'
@@ -27,12 +27,12 @@ async function getMails (req, res, next) {
 
             const foundUser = await User.findOne({
                 '_id':req.userId,
-                'mailBoxes.user': req.body.user
+                'mailBoxes.user': req.query.user
             }, 'mailBoxes.$');
             
             if (foundUser) {
                 for (j = 0; j < foundUser.mailBoxes[0].mails.length; j++) {
-                    if (foundUser.mailBoxes[0].mails[j].folder == req.body.folder) {
+                    if (foundUser.mailBoxes[0].mails[j].folder == req.query.folder) {
                         mails.push(foundUser.mailBoxes[0].mails[j])
                     }
                 }
