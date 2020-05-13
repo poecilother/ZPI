@@ -35,7 +35,7 @@ function changeLevel (req, res, next) {
                 '_id':req.userId,
                 'mailBoxes.user': req.body.user
             });
-
+            
             if (foundUser) {
                 User.updateOne({ 
                     '_id':req.userId,

@@ -29,15 +29,16 @@ async function downloadEmails (req, res) {
                 downloadEmailsImap(userData).then(emails => {
                     console.log('wyjscie z imap')
                     addToDatabase(emails, userData).then(success => {
-                        if (success == 1) {
-                            return res.json({
-                                success: 1,
-                                msg: 'Pomyślnie dodano maile'
-                            });
-                        } else {
+                        if (success == 0) {
                             return res.json({
                                 success: 0,
-                                msg: 'Nie udało się dodać maili'
+                                msg: 'Brak nowych wiadomości'
+                            });
+                        } else {
+                            let msg = 'Pomyślnie dodano ' + success + ' maili'
+                            return res.json({
+                                success: 1,
+                                msg: msg
                             });
                         }
                     });
@@ -49,7 +50,7 @@ async function downloadEmails (req, res) {
                         if (success == 0) {
                             return res.json({
                                 success: 0,
-                                msg: 'Nie udało się dodać maili'
+                                msg: 'Brak nowych wiadomości'
                             });
                         } else {
                             let msg = 'Pomyślnie dodano ' + success + ' maili'
