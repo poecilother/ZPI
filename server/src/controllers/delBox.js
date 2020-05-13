@@ -21,7 +21,7 @@ function delBox (req, res, next) {
             });
 
             if (foundUser) {
-                User.updateOne({ '_id':req.userId }, { $pull: { mailBoxes: { user: req.body.user }}}, (err, model) => {
+                User.updateOne({ '_id':req.userId }, { $pull: { mailBoxes: { user: req.body.user }}}, (err) => {
                     if (err) {
                         return res.send(err);
                     }

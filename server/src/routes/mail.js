@@ -4,6 +4,7 @@ const delBox = require('../controllers/delBox');
 const getBoxData = require('../controllers/boxes');
 const changeLevel = require('../controllers/changeLevel');
 const downloadEmails = require('../controllers/downloadEmails');
+const delMail = require('../controllers/delMail');
 
 router.use('/imap', require('../routes/imap'));
 router.use('/pop3', require('../routes/pop3'));
@@ -17,5 +18,7 @@ router.get('/boxes', getBoxData);
 router.post('/changelevel', changeLevel);
 
 router.get('/downloademails', downloadEmails);
+
+router.delete('/delmails', delMail);
 
 module.exports = router;

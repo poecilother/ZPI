@@ -44,6 +44,57 @@ const userSchema = new Schema({
         level: {
             type: Number,
             enum: [1, 2, 3]
+        },
+        mails: {
+            type: Array,
+            messageId: {
+                type: String
+            },
+            from: {
+                address: {
+                    type: String
+                },
+                name: {
+                    type: String
+                }
+            },
+            subject: {
+                type: String
+            },
+            body: {
+                type: String
+            },
+            unseen: {
+                type: Boolean
+            },
+            folder: {
+                type: Number,
+                enum: [1, 2, 3]
+            },
+            owner: {
+                type: String
+            },
+            address: {
+                type: String
+            },
+            time: {
+                type: Date,
+                default: Date.now
+            }
+        },
+        blacklist: {
+            mails: {
+                type: Array,
+                mail: {
+                    type: String
+                }
+            },
+            words: {
+                type: Array,
+                word: {
+                    type: String
+                }
+            }
         }
     }
 }, {

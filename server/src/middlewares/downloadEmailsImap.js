@@ -26,9 +26,9 @@ async function downloadEmailsImap(imapData) {
                 html: '',
                 textAsHtml: '',
             } };
-        let done = 0;
-        imap.once('ready', function() {
-            imap.openBox('INBOX', true, function(err, box) {
+            imap.once('ready', function() {
+                imap.openBox('INBOX', true, function(err, box) {
+                    let done = 0;
                 if (err) throw err;
                 console.log(box.messages.total + ' message(s) found!');
                 // 1:* - Retrieve all messages
@@ -58,10 +58,12 @@ async function downloadEmailsImap(imapData) {
                                 newEmail.body.text = mail.text;
                                 newEmail.body.html = mail.html;
                                 newEmail.body.textAsHtml = mail.textAsHtml;
+                                newEmail.messageId = mail.messageId;
                                 console.log('TEMAT: ' + email.subject);
                                 emails.push(newEmail);
                                 if(done){
-                                    console.log('Returning emails')
+                                    console.log('Returning emails');
+                                    imap.end();
                                     return resolve(emails);
                                 }
                             });
@@ -82,7 +84,6 @@ async function downloadEmailsImap(imapData) {
                     f.once('end', function() {
                         console.log('Done fetching all messages!');
                         done = 1;
-                        imap.end();
                     });
                 });
             });
@@ -114,7 +115,8 @@ function createEmail() {
             text: '',
             html: '',
             textAsHtml: '',
-        } };
+        },
+        messageId: ''  };
     return newEmail;
 };
 

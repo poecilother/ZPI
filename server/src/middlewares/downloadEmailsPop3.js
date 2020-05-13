@@ -94,15 +94,17 @@ async function downloadEmailsPop3 (pop3Data) {
                     newEmail.body.text = mail.text;
                     newEmail.body.html = mail.html;
                     newEmail.body.textAsHtml = mail.textAsHtml;
+                    newEmail.messageId = mail.messageId;
                     emails.push(newEmail);
                     console.log('TEMAT: ' + newEmail.subject);
                     
-                    if (counter == number) {
+                    counter++;
+
+                    if (counter == number + 1) {
                         client.quit();
                     } else {
                         client.retr(counter);
                     }
-                    counter++;
                 });
                 //client.dele(msgnumber);
                 
@@ -140,7 +142,8 @@ function createEmail() {
             text: '',
             html: '',
             textAsHtml: '',
-        } };
+        },
+        messageId: '' };
     return newEmail;
 };
 
