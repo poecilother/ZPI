@@ -6,6 +6,7 @@ const changeLevel = require('../controllers/changeLevel');
 const downloadEmails = require('../controllers/downloadEmails');
 const delMail = require('../controllers/delMail');
 const getMails = require('../controllers/getMails');
+const getMail = require('../controllers/getMail');
 
 router.use('/imap', require('../routes/imap'));
 router.use('/pop3', require('../routes/pop3'));
@@ -23,5 +24,7 @@ router.get('/downloademails', downloadEmails);
 router.delete('/delmails', delMail);
 
 router.get('/getmails', getMails);
+
+router.get('/getmail', getMail);
 
 module.exports = router;

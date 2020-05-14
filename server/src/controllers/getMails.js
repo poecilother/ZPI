@@ -30,6 +30,7 @@ async function getMails (req, res, next) {
                             }
                         }
                     }
+                    
                     Promise.all(promises).then((mails) => {
                         return res.json({
                             success: 1,
