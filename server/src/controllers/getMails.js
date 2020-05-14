@@ -49,13 +49,18 @@ async function getMails (req, res, next) {
                         
                         Promise.all(promises).then((mails) => {
                             console.log('Długość mails: ', mails[0].length)
+
                             sendMails = [];
+
                             for (let i = 0; i < mails[0].length; i++) {
                                 sendMails.push(mails[0][i]);
                             }
+
+                            const sortedSendMails = sendMails.sort((a, b) => a.date - b.date);
+
                             return res.json({
                                 success: 1,
-                                mails: sendMails
+                                mails: sortedSendMails
                             });
                         }).catch(function (err) {
                             console.log('PROMISE: ', err);
