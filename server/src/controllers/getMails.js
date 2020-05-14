@@ -50,6 +50,13 @@ async function getMails (req, res, next) {
                         Promise.all(promises).then((mails) => {
                             console.log('Długość mails: ', mails[0].length)
 
+                            if (mails[0].length == 0) {
+                                return res.json({
+                                    success: 1,
+                                    msg: 'Brak maili'
+                                });
+                            }
+
                             sendMails = [];
 
                             for (let i = 0; i < mails[0].length; i++) {
