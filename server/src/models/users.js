@@ -77,9 +77,8 @@ const userSchema = new Schema({
             address: {
                 type: String
             },
-            time: {
-                type: Date,
-                default: Date.now
+            date: {
+                type: String
             }
         },
         blacklist: {

@@ -100,7 +100,7 @@ async function addToDatabase(emails, userData) {
                 'mailBoxes.user': userData.user,
                 'mailBoxes.mails.messageId': emails[i].messageId
             });
-    
+            
             if (!foundMessageId) {
                 await User.updateOne({
                     '_id': userData.userId,
@@ -113,10 +113,11 @@ async function addToDatabase(emails, userData) {
                     },
                     subject: emails[i].subject,
                     body: emails[i].body.html,
-                    unseen: 0,
+                    unseen: 1,
                     folder: 1,
                     owner: userData.userId,
-                    address: userData.user
+                    address: userData.user,
+                    date: emails[i].date
                 }}});
                 mailCounter ++;
             } 

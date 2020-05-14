@@ -16,6 +16,9 @@ async function getMails (req, res, next) {
         }); 
     }
 
+    console.log(req.query.user);
+    console.log(req.query.folder);
+
     jwt.verify(req.header('authorization'), process.env.JWT_SECRET, async (err, decodedToken) => {
         if (err) {
             return res.json({ success: -1 });
