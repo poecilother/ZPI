@@ -52,7 +52,7 @@ async function getMails (req, res, next) {
                             if (!mails[0]) {
                                 return res.json({
                                     success: 1,
-                                    msg: 'Brak maili'
+                                    mails: mails
                                 });
                             }
 
