@@ -83,16 +83,10 @@ const userSchema = new Schema({
         },
         blacklist: {
             mails: {
-                type: Array,
-                mail: {
-                    type: String
-                }
+                type: Array
             },
             words: {
-                type: Array,
-                word: {
-                    type: String
-                }
+                type: Array
             }
         }
     }
