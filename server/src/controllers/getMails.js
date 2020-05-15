@@ -64,7 +64,7 @@ async function getMails (req, res, next) {
                                 sendMails.push(mails[0][i]);
                             }
 
-                            const sortedSendMails = sendMails.sort((a, b) => a.date - b.date);
+                            const sortedSendMails = sendMails.sort((a, b) => b.date - a.date);
 
                             return res.json({
                                 success: 1,

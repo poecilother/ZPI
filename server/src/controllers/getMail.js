@@ -17,13 +17,30 @@ async function getMail (req, res, next) {
 
             const foundUser = await User.findOne({
                 '_id': req.userId,
-                'mailBoxes.mails.messageId': req.query.messageId
-            }, {
-                'mailBoxes.mails.$': 1
-            });
+                'mailBoxes.mails.messageId': req.query.messageId 
+            }, 'mailBoxes.mails.$');
 
-            console.log(foundUser.mailBoxes[0].mails.length);
+            if (foundUser) {
 
+                for (let i = 0; i < foundUser.mailBoxes[0].mails.length; i++){
+                    if (foundUser.mailBoxes[0].mails[i].messageId == req.query.messageId) {
+                        return res.json({
+                            success: 1,
+                            mail: foundUser.mailBoxes[0].mails[i]
+                        });
+                    }
+                }   
+
+                return res.json({
+                    success: 0,
+                    msg: 'Nie znaleziono wiadomości'
+                });
+            } else {
+                return res.json({
+                    success: 0,
+                    msg: 'Nie znaleziono wiadomości'
+                });
+            }
         }
     });
 }
