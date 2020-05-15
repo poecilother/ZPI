@@ -15,13 +15,32 @@ async function addMailToBlacklist (req, res, next) {
                     'mailBoxes.user': req.body.user
                 });
 
-                console.log(foundUser)
+                if (!foundUser) {
+                    return res.json({
+                        success: 0,
+                        msg: 'Brak skrzynki o takim adresie'
+                    });
+                }
 
-                await User.updateOne({
+                const foundMail = await User.findOne({
+                    '_id': req.userId,
+                    'mailBoxes.user': req.body.user,
+                    'mailBoxes.blacklist.mails': req.body.mail
+                });
+
+                if (foundMail) {
+                    return res.json({
+                        success: 0,
+                        msg: 'Skrzynka o takim adresie jest już na blackliście'
+                    });
+                }
+
+
+                User.updateOne({
                     '_id': req.userId,
                     'mailBoxes.user': req.body.user
                 }, { $push: {
-                    'mailBoxes.$[].blacklist.mails': req.body.mail
+                    'mailBoxes.$.blacklist.mails': req.body.mail
                 }}, (err) => {
                     if (err) {
                         return res.json({
