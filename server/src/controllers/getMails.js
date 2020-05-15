@@ -98,11 +98,13 @@ async function getMails (req, res, next) {
                             }
                         }
                     }
-                    
                 }
+
+                const sortedMails = mails.sort((a, b) => b.date - a.date);
+
                 return res.json({
                     success: 1,
-                    mails: mails
+                    mails: sortedMails
                 });
             });
         }

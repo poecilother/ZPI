@@ -10,11 +10,18 @@ async function addMailToBlacklist (req, res, next) {
             } else {
                 req.userId = decodedToken.sub;
 
+                const foundUser = await User.findOne({
+                    '_id': req.userId,
+                    'mailBoxes.user': req.body.user
+                });
+
+                console.log(foundUser)
+
                 await User.updateOne({
                     '_id': req.userId,
                     'mailBoxes.user': req.body.user
                 }, { $push: {
-                    'mailBoxes.blacklist.$.mails': req.body.mail
+                    'mailBoxes.$[].blacklist.mails': req.body.mail
                 }}, (err) => {
                     if (err) {
                         return res.json({
