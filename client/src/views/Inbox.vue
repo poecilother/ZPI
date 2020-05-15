@@ -11,6 +11,7 @@
     </div>
     <popup-add-mail></popup-add-mail>
     <popup-settings></popup-settings>
+    <popup-stats></popup-stats>
     <alert></alert>
     <div class="spinner" v-if="loader">
       <div class="bounce1"></div>
@@ -28,6 +29,7 @@ import Box from '@/components/Box.vue'
 import ButtonAdd from '@/components/ButtonAdd.vue'
 import PopupAddMail from '@/components/PopupAddMail.vue'
 import PopupSettings from '@/components/PopupSettings.vue'
+import PopupStats from '@/components/PopupStats.vue'
 import Alert from '@/components/Alert.vue'
 
 export default {
@@ -40,6 +42,7 @@ export default {
     ButtonAdd,
     PopupAddMail,
     PopupSettings,
+    PopupStats,
     Alert
   },
   data(){
@@ -115,7 +118,7 @@ export default {
   .spinner {
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: calc(50% - 35px);
     width: 70px;
     text-align: center;
   }

@@ -11,17 +11,17 @@
     <div class="mail">
       <h3 class="all">Wszystkie</h3>
       <ul>
-        <li class="active">
+        <li :class="{ active: user == '' && folder == 1 }" @click="chooseInbox('', 1)">
           <i class="material-icons">inbox</i>
           <h4>Skrzynka odbiorcza</h4>
           <h5>25</h5>
         </li>
-        <li>
+        <li :class="{ active: user == '' && folder == 2 }" @click="chooseInbox('', 2)">
           <i class="material-icons">report</i>
           <h4>Spam</h4>
           <h5>5</h5>
         </li>
-        <li>
+        <li :class="{ active: user == '' && folder == 3 }" @click="chooseInbox('', 3)">
           <i class="material-icons">delete</i>
           <h4>Usunięte</h4>
           <h5>3</h5>
@@ -31,17 +31,17 @@
     <div class="mail" v-for="box in boxes" :key="box.user">
       <h3 :class="{ outlook: getHost(box.user) == 'outlook', gmail: getHost(box.user) == 'gmail',}">{{ getUserLogin(box.user) }}</h3>
       <ul>
-        <li class="active">
+        <li :class="{ active: user == box.user && folder == 1 }" @click="chooseInbox(box.user, 1)">
           <i class="material-icons">inbox</i>
           <h4>Skrzynka odbiorcza</h4>
           <h5>25</h5>
         </li>
-        <li>
+        <li :class="{ active: user == box.user && folder == 2 }" @click="chooseInbox(box.user, 2)">
           <i class="material-icons">report</i>
           <h4>Spam</h4>
           <h5>5</h5>
         </li>
-        <li>
+        <li :class="{ active: user == box.user && folder == 3 }" @click="chooseInbox(box.user, 3)">
           <i class="material-icons">delete</i>
           <h4>Usunięte</h4>
           <h5>3</h5>
@@ -56,7 +56,9 @@ export default {
   name: 'MenuCore',
   data(){
     return{
-      boxes: ''
+      boxes: '',
+      user: 0,
+      folder: 1,
     }
   },
   computed: {
@@ -117,6 +119,16 @@ export default {
       index = host.indexOf(".");
       host = host.substring(0, index);
       return host;
+    },
+    chooseInbox(user, folder){
+      this.user = user;
+      this.folder = folder;
+      this.$store.commit('changeActiveInboxUser', user);
+      this.$store.commit('changeActiveInboxFolder', folder);
+      this.$store.commit('changeReadMailId', 0);
+      if(window.innerWidth <= 1200){
+        this.closeMenu();
+      }
     }
   }
 }

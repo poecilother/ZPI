@@ -18,7 +18,48 @@
             <button v-b-tooltip.hover title="Średniozaawansowane filtrowanie spamu" :class="{ active: box.level == 2 }" @click="changeLevel(2, box.level, box.user)">medium</button>
             <button v-b-tooltip.hover title="Zaawansowane filtrowanie spamu" :class="{ active: box.level == 3 }" @click="changeLevel(3, box.level, box.user)">hard</button>
           </div>
-          <h5>{{ getHost(box.user) }}</h5>
+          <footer>
+            <h6>Czarna lista</h6>
+            <h5>{{ getHost(box.user) }}</h5>
+          </footer>
+        </div>
+      </section>
+      <h5 class="section-header" v-if="boxes.length != 0">Czarna lista słów - dfecica</h5>
+      <section class="blacklist words" v-if="boxes.length != 0">
+        <div class="add">
+          <input class="default" type="text" placeholder="Słowo">
+          <button class="icon">
+            <i class="material-icons" v-b-tooltip.hover title="Dodaj">add</i>
+          </button>
+        </div>
+        <div class="words">
+          <div class="word">
+            <p>money</p>
+            <i class="material-icons">close</i>
+          </div>
+          <div class="word">
+            <p>example</p>
+            <i class="material-icons" v-b-tooltip.hover title="Usuń">close</i>
+          </div>
+        </div>
+      </section>
+      <h5 class="section-header" v-if="boxes.length != 0">Czarna lista maili - dfecica</h5>
+      <section class="blacklist emails" v-if="boxes.length != 0">
+        <div class="add">
+          <input class="default" type="text" placeholder="Email">
+          <button class="icon">
+            <i class="material-icons" v-b-tooltip.hover title="Dodaj">add</i>
+          </button>
+        </div>
+        <div class="words">
+          <div class="word">
+            <p>money@moneny.pl</p>
+            <i class="material-icons">close</i>
+          </div>
+          <div class="word">
+            <p>example@example.com</p>
+            <i class="material-icons" v-b-tooltip.hover title="Usuń">close</i>
+          </div>
         </div>
       </section>
       <h5 class="section-header" v-if="local == 1">Zmiana hasła</h5>
@@ -189,7 +230,7 @@ export default {
 
 <style lang="scss">
   div#popup-settings div.container { width: calc(100% - 40px); max-width: 100%; height: calc(100% - 40px); overflow-y: overlay; top: 20px; left: 20px;  color: #000;  }
-  div#popup-settings div.container h5.section-header { height: 35px; line-height: 35px; margin: 20px 0 20px 40px; padding: 0 20px; color: rgba(0, 0, 0, 0.5); font-size: 18px; 
+  div#popup-settings div.container h5.section-header { height: 35px; line-height: 35px; margin: 20px 40px; padding: 0 20px; color: rgba(0, 0, 0, 0.5); font-size: 18px; 
   font-weight: 400; border-left: 2px solid rgba(0, 0, 0, 0.1); }
   div#popup-settings div.container section.mailboxes { display: flex; flex-wrap: wrap; padding: 0; }
   div#popup-settings div.container section.mailboxes button:focus { outline: 0; }
@@ -214,7 +255,21 @@ export default {
     color: rgba(255, 255, 255, 0.8); }
   div#popup-settings div.container section.mailboxes div.spam-level button:last-child:hover { background: linear-gradient(90deg,rgba(62,33,139,1) 0%, rgba(50,38,148,1) 100%,); }
   div#popup-settings div.container section.mailboxes div.spam-level button.active:last-child { background: linear-gradient(90deg,rgba(62,33,139,1) 0%, rgba(50,38,148,1) 100%,); }
-  div#popup-settings div.container section.mailboxes h5 { margin: 10px 0 0 0; padding: 0; text-align: right; font-size: 11px; color: rgba(0, 0, 0, 0.2); text-transform: capitalize;}
+  div#popup-settings div.container section.mailboxes footer h5 { margin: 0; padding: 0; text-align: center; font-size: 11px; color: $pink; 
+    text-transform: capitalize; font-weight: 600; }
+  div#popup-settings div.container section.mailboxes footer { display: flex; justify-content: space-between; margin: 15px 0 0 0; }
+  div#popup-settings div.container section.mailboxes footer h6 { margin: 0; padding: 0; font-size: 11px; color: rgba(0, 0, 0, 0.2); cursor: pointer; }
+  div#popup-settings div.container section.mailboxes footer h6:hover { color: rgba(0, 0, 0, 0.5); }
+  div#popup-settings div.container section.blacklist div.add { display: flex; margin: 40px 40px 0 40px; }
+  div#popup-settings div.container section.blacklist div.add input { width: 300px; }
+  div#popup-settings div.container section.blacklist div.add button { margin-left: 20px; }
+  div#popup-settings div.container section.blacklist div.words { display: flex; padding: 20px 33px; }
+  div#popup-settings div.container section.blacklist div.word { display: flex; align-items: center; margin: 7px; padding: 5px 13px; border-radius: 25px; 
+    background: rgba(0, 0, 0, 0.05); }
+  div#popup-settings div.container section.blacklist div.word p { margin: 0; padding: 0; font-size: 13px; color: rgba(0, 0, 0, 0.7); }
+  div#popup-settings div.container section.blacklist div.word i.material-icons { display: block; width: 13px; height: 13px; margin-top: 2px; margin-left: 3px; font-size: 13px; 
+    color: rgba(0, 0, 0, 0.1); cursor: pointer; }
+  div#popup-settings div.container section.blacklist div.word i.material-icons:hover { color: rgba(0, 0, 0, 1); } 
   div#popup-settings div.container section.password { padding: 20px 40px; }
   div#popup-settings div.container section.password input, div#popup-settings div.container section.password button { width: 300px; }
 

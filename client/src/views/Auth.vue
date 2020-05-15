@@ -213,16 +213,6 @@ export default {
   div#tab section#info hgroup h3 { margin: 0 5px; padding: 0; font-size: 16px; color: rgba(255, 255, 255, 0.1); }
   div#tab section#auth { width: 45%; padding: 50px; background: #fff; border-top-right-radius: 15px; border-bottom-right-radius: 15px; }
   div#tab section#auth h2 { margin: 0 0 35px 0; padding: 0; font-size: 28px; font-weight: 700; color: #424242; }
-  input.default { display: block; width: 100%; margin-bottom: 15px; padding-bottom: 15px; border: 0; border-bottom: 2px solid transparent; color: #8453c6;
-  border-image: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,0.5) 100%); border-image-slice: 1; font-weight: 600; font-size: 13px; }
-  input.default::placeholder { color: #BDBDBD; }
-  input.default:focus { outline: 0; border-image: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,1) 100%); border-image-slice: 1; }
-  button.default { display: block; width: 100%; height: 40px; margin: 35px 0; position: relative; border: 0; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); 
-  font-size: 11px; letter-spacing: 4px; background: #8453c6; background: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,1) 100%);  }
-  button.default:focus { outline: 0; }
-  button.default i.material-icons { position: absolute; top: calc(50% - 12px); right: 5px; color: rgba(255, 255, 255, 0.5); }
-  button.default:hover { color: #fff; }
-  button.default:hover i.material-icons { color: #fff; }
   div#tab section#auth nav#auth-links ul { margin: 35px 0; padding: 0; }
   div#tab section#auth nav#auth-links ul li { list-style: none; text-align: center; }
   div#tab section#auth nav#auth-links ul li a { text-decoration: none; color: #BDBDBD; font-weight: 600; font-size: 12px; }

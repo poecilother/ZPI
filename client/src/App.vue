@@ -21,7 +21,10 @@ export default {
     },
     newToken(){
       return this.$store.state.newToken;
-    }
+    },
+    readMailId(){
+      return this.$store.state.readMailId;
+    },
   },
   created(){
     this.checkAuth();
@@ -42,19 +45,18 @@ export default {
         this.$router.push('/');
       }else if(localStorage.access_token !== undefined && this.$router.currentRoute.name == 'Auth'){
         this.$router.push('/inbox');
-      }else if(localStorage.refresh_token !== undefined){
+      }else if(localStorage.refresh_token === undefined && this.$router.currentRoute.name != 'Auth'){
         let self = this;
         this.axios.get(this.api + 'users/checkaccount', { params: { token: localStorage.refresh_token } })
         .then(function (response) {
-          if(respose.data.success == 0){
+          if(response.data.success == 0){
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
-            this.$router.push('/')
+            self.$router.push('/')
           }
         })
-        .catch(function (error) {
-          self.$router.push('/');
-        })
+      }else if(this.$router.currentRoute.name == 'Mail' && this.readMailId == 0){
+        this.$router.push('/inbox');
       }
     },
     getNewToken(){
@@ -74,7 +76,7 @@ export default {
 
 <style lang="scss">
   html { height: 100vh; }
-  body { height: 100vh; font-family: 'rawline', sans-serif; color: #fff; }
+  body { height: 100vh; font-family: 'rawline', sans-serif; color: #fff; overflow-y: hidden; }
   div#app { height: 100vh; }
   h1, h2, h3, h4, h5, h6 { line-height: normal; }
 
@@ -88,6 +90,22 @@ export default {
   div.popup div.container header div.icon-close i.material-icons { color: rgba(0, 0, 0, 0.5); font-size: 28px; }
   div.popup div.container header div.icon-close:hover i.material-icons { color: rgba(0, 0, 0, 0.8); }
   div.popup div.container header h4 { margin: 0 0 0 13px; padding: 0; color: rgba(0, 0, 0, 0.5); font-size: 20px; line-height: 50px; font-weight: 400; }
+
+  input.default { display: block; width: 100%; margin-bottom: 15px; padding-bottom: 15px; border: 0; border-bottom: 2px solid transparent; color: #8453c6;
+  border-image: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,0.5) 100%); border-image-slice: 1; font-weight: 600; font-size: 13px; }
+  input.default::placeholder { color: #BDBDBD; }
+  input.default:focus { outline: 0; border-image: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,1) 100%); border-image-slice: 1; }
+  button.default { display: block; width: 100%; height: 40px; margin: 35px 0; position: relative; border: 0; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); 
+  font-size: 11px; letter-spacing: 4px; background: #8453c6; background: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,1) 100%);  }
+  button.default:focus { outline: 0; }
+  button.default i.material-icons { position: absolute; top: calc(50% - 12px); right: 5px; color: rgba(255, 255, 255, 0.5); }
+  button.default:hover { color: #fff; }
+  button.default:hover i.material-icons { color: #fff; }
+  button.icon { display: flex; justify-content: center; align-items: center; height: 30px; width: 30px; border: 0; background: #8453c6; 
+    background: linear-gradient(90deg, rgba(132,83,198,1) 0%, rgba(232,49,203,1) 100%); }
+  button.icon:focus { outline: 0; }
+  button.icon i.material-icons { display: block; color: rgba(255, 255, 255, 0.7); font-size: 20px; }
+  button.icon:hover i.material-icons { color: #fff; }
 
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-button { width: 0px; height: 0px; }

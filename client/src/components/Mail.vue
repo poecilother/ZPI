@@ -24,7 +24,18 @@ Vestibulum sed lacus et arcu luctus sodales sed ut tellus. Nulla venenatis euism
 <script>
 export default {
   name: 'Mail',
-
+  computed:{
+    readMailId(){
+      return this.$store.state.readMailId;
+    },
+  },
+  watch: {
+    readMailId(){
+      if(!this.readMailId){
+        this.$router.push('/inbox')
+      }
+    }
+  }
 }
 </script>
 

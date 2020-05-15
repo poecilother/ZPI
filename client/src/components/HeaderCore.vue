@@ -11,6 +11,11 @@
             <i class="material-icons">add_box</i>
           </a>
         </li>
+        <li v-if="boxesCount != 0">
+          <a href="javascript:;" v-b-tooltip.hover title="Statystyki" @click="showPopupStats()">
+            <i class="material-icons">bar_chart</i>
+          </a>
+        </li>
         <li v-if="boxesCount != 0 || accountType == 1">
           <a href="javascript:;" v-b-tooltip.hover title="Ustawienia" @click="showPopupSettings()">
             <i class="material-icons">settings</i>
@@ -46,6 +51,9 @@ export default {
     },
     showPopupSettings(){
       this.$store.commit('togglePopupSettings');
+    },
+    showPopupStats(){
+      this.$store.commit('togglePopupStats');
     },
     logout(){
       localStorage.removeItem('access_token');

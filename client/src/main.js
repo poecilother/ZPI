@@ -9,6 +9,10 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import GAuth from 'vue-google-oauth2'
+import VueApexCharts from 'vue-apexcharts'
+
+Vue.component('apexchart', VueApexCharts)
+Vue.use(require('vue-moment'));
 
 const gauthOption = {
   clientId: '475344558073-0a10hr1k5prqm8t5j9g3r2eub4alh420.apps.googleusercontent.com',
