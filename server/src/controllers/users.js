@@ -174,11 +174,12 @@ module.exports = {
                                 })
                             }
                         });
-                    } else { res.json({
-                                success: 0,
-                                msg: 'Konto nie jest lokalne'
-                                })
-                            }
+                    } else { 
+                        res.json({
+                            success: 0,
+                            msg: 'Konto nie jest lokalne'
+                        })
+                    }
                 });
             }
         });
