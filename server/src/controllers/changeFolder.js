@@ -2,6 +2,8 @@ const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 
 function changeFolder (req, res, next) {
+    console.log(req.body.messageId[0])
+
     if (!req.body.messageId) {
         return res.json({
             success: 0,
@@ -15,53 +17,57 @@ function changeFolder (req, res, next) {
         } else {
             req.userId = decodedToken.sub;
 
-            const user = req.body.user;
-            const foundUser = await User.findOne({
-                '_id': req.userId,
-                'mailBoxes': {
-                    '$elemMatch': {
-                        user, 'mails.messageId': req.body.messageId
-                    }
-                }
-            }, 'mailBoxes');
-
-            if (foundUser) {
-                await User.updateOne({
-                    '_id': req.userId,
-                    'mailBoxes': {
-                        '$elemMatch': {
-                            'mails.messageId': req.body.messageId
-                        }
-                    }
-                }, 
-                { $set: {
-                    'mailBoxes.$[outer].mails.$[inner].folder': req.body.folder
-                }},
-                { 'arrayFilters': [
-                    {'outer.user': req.body.user},
-                    {'inner.messageId': req.body.messageId}
-                ]}, (err, result) => {
-                    if (err) {
-                        return res.json({
-                            success: 0,
-                            msg: err
-                        });
-                    } else {
-                        console.log(result)
-                        return res.json({
-                            success: 1,
-                            msg: 'Pomyślnie zmieniono folder'
-                        });
-                    }
-                });
-            } else {
-                return res.json({
-                    success: 0,
-                    msg: 'Nie ma maila o tym id w podanej skrzynce'
-                });
+            let promises = [];
+        
+            for (let i = 0; i < req.body.messageId.length; i++) {
+                promises.push(updateFolder(req.userId, req.body.messageId[i], req.body.folder, i));
             }
+
+            Promise.all(promises).then((success) => {
+                successSum = success.reduce((a, b) => a + b, 0);
+                if (successSum > 0) {
+                    return res.json({
+                        success: 1,
+                        msg: 'Pomyślnie zmienono folder'
+                    });
+                } else {
+                    return res.json({
+                        success: 0,
+                        msg: 'Nie udało się zmienić folderu'
+                    });
+                }
+            });
         }
     });
+}
+
+async function updateFolder (userId, messageId, folder) {
+    try {  
+        return new Promise(async (resolve) => {
+            await User.updateOne({
+                '_id': userId,
+                'mailBoxes': {
+                    '$elemMatch': {
+                        'mails.messageId': messageId
+                    }
+                }
+            }, 
+            { $set: {
+                'mailBoxes.$[].mails.$[inner].folder': folder
+            }},
+            { 'arrayFilters': [
+                {'inner.messageId': messageId}
+            ]}, (err) => {
+                if (err) {
+                    return resolve(0);
+                } else {
+                    return resolve(1);
+                }
+            });
+        });
+    } catch (err) {
+        console.log('ERROR: ', err);
+    }
 }
 
 module.exports = changeFolder;
