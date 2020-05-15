@@ -94,7 +94,8 @@ async function getMails (req, res, next) {
                     if (foundUser) {
                         for (j = 0; j < foundUser.mailBoxes[0].mails.length; j++) {
                             if (foundUser.mailBoxes[0].mails[j].folder == req.query.folder) {
-                                mails.push(foundUser.mailBoxes[0].mails[j])
+                                mails.push(foundUser.mailBoxes[0].mails[j]);
+                                delete mails[j].body;
                             }
                         }
                     }
@@ -116,8 +117,9 @@ async function getMails (req, res, next) {
 async function pushMails(foundUser, i, j, mails) {
     try{
         return new Promise((resolve) => {
-            mails.push(foundUser.mailBoxes[i].mails[j])
-            return resolve(mails)
+            mails.push(foundUser.mailBoxes[i].mails[j]);
+            delete mails[j].body;
+            return resolve(mails);
         });
     } catch (err) {
         console.log('ERROR: ', err);
