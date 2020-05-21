@@ -1,9 +1,8 @@
 const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 
-async function addMailToBlacklist (req, res, next) {
+async function addWordToBlacklist (req, res, next) {
     try {
-
         if(!req.body.user) {
             return res.json({
                 success: 0,
@@ -11,10 +10,10 @@ async function addMailToBlacklist (req, res, next) {
             });
         }
 
-        if(!req.body.mail) {
+        if(!req.body.word) {
             return res.json({
                 success: 0,
-                msg: 'Podaj adres mailowy'
+                msg: 'Podaj słowo'
             });
         }
 
@@ -36,16 +35,18 @@ async function addMailToBlacklist (req, res, next) {
                     });
                 }
 
-                const foundMail = await User.findOne({
+                const word = req.body.word.toLowerCase();
+                
+                const foundWord = await User.findOne({
                     '_id': req.userId,
                     'mailBoxes.user': req.body.user,
-                    'mailBoxes.blacklist.mails': req.body.mail
+                    'mailBoxes.blacklist.words': word
                 });
 
-                if (foundMail) {
+                if (foundWord) {
                     return res.json({
                         success: 0,
-                        msg: 'Skrzynka o takim adresie jest już na blackliście'
+                        msg: 'Słowo jest już na blackliście'
                     });
                 }
 
@@ -54,17 +55,17 @@ async function addMailToBlacklist (req, res, next) {
                     '_id': req.userId,
                     'mailBoxes.user': req.body.user
                 }, { $push: {
-                    'mailBoxes.$.blacklist.mails': req.body.mail
+                    'mailBoxes.$.blacklist.words': word
                 }}, (err) => {
                     if (err) {
                         return res.json({
                             success: 0,
-                            msg: 'Nie udało się dodać maila do blacklisty'
+                            msg: 'Nie udało się dodać słowa do blacklisty'
                         });
                     } else {
                         return res.json({
                             success: 1,
-                            msg: 'Pomyślnie dodano maila do blacklisty'
+                            msg: 'Pomyślnie dodano słowa do blacklisty'
                         });
                     }
                 });
@@ -76,4 +77,4 @@ async function addMailToBlacklist (req, res, next) {
     }
 }
 
-module.exports = addMailToBlacklist;
+module.exports = addWordToBlacklist;

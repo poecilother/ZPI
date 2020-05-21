@@ -11,6 +11,7 @@ const changeFolder = require('../controllers/changeFolder');
 const addMailToBlacklist = require('../controllers/addMailToBlacklist');
 const getMailsFromBlacklist = require('../controllers/getMailsFromBlacklist');
 const delMailFromBlacklist = require('../controllers/delMailFromBlacklist');
+const addWordToBlacklist = require('../controllers/addWordToBlacklist');
 
 router.use('/imap', require('../routes/imap'));
 router.use('/pop3', require('../routes/pop3'));
@@ -38,5 +39,7 @@ router.post('/addmailtoblacklist', addMailToBlacklist);
 router.get('/getmailsfromblacklist', getMailsFromBlacklist);
 
 router.delete('/delmailfromblacklist', delMailFromBlacklist);
+
+router.post('/addwordtoblacklist', addWordToBlacklist);
 
 module.exports = router;
