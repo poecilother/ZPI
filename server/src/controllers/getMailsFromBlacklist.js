@@ -20,10 +20,10 @@ async function getMailsFromBlacklist (req, res, next) {
                 const foundUser = await User.findOne({
                     '_id': req.userId,
                     'mailBoxes.user': req.query.user
-                });
+                },'mailBoxes.$');
 
                 if (foundUser) {
-                    
+
                     return res.json({
                         success: 1,
                         mails: foundUser.mailBoxes[0].blacklist.mails

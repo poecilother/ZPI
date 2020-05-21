@@ -20,7 +20,7 @@ async function getWordsFromBlacklist (req, res, next) {
                 const foundUser = await User.findOne({
                     '_id': req.userId,
                     'mailBoxes.user': req.query.user
-                });
+                }, 'mailBoxes.$');
 
                 if (foundUser) {
                     

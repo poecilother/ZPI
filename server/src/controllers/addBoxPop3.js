@@ -55,7 +55,11 @@ function addBoxPop3(req, res, next){
               password: req.body.password,
               host: req.body.host,
               level: 2,
-              mails: []
+              mails: [],
+              blacklist: {
+                mails: [],
+                words: []
+              }
             }}});
 
             res.locals.success = 1;
