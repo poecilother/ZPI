@@ -40,9 +40,9 @@ function getBoxData (req, res, next) {
                     }
                 }
 
-                boxesToPush['Folder 1'] = unseenSumForFolder1;
-                boxesToPush['Folder 2'] = unseenSumForFolder2;
-                boxesToPush['Folder 3'] = unseenSumForFolder3;
+                boxesToPush['folder_1'] = unseenSumForFolder1;
+                boxesToPush['folder_2'] = unseenSumForFolder2;
+                boxesToPush['folder_3'] = unseenSumForFolder3;
 
                 boxes.push(boxesToPush);
             }
