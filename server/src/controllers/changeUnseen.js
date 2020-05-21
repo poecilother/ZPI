@@ -1,7 +1,8 @@
 const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 
-async function changeUnseen (req, res, next) {
+function changeUnseen (req, res, next) {
+    console.log(req.body.messageId[0])
 
     if (!req.body.messageId) {
         return res.json({
@@ -13,7 +14,7 @@ async function changeUnseen (req, res, next) {
     if (req.body.unseen < 0 || req.body.unseen > 1){
         return res.json({
             success: 0,
-            msg: 'Podaj 0 albo 1'
+            msg: 'Niepoprawna wartość unseen'
         });
     }
     
@@ -22,7 +23,7 @@ async function changeUnseen (req, res, next) {
     if (isNaN(x) || !(parseInt(Number(x)) == x)){
         return res.json({
             success: 0,
-            msg: 'Podaj 0 albo 1'
+            msg: 'Niepoprawna wartość unseen'
         });
     }
 
@@ -32,29 +33,23 @@ async function changeUnseen (req, res, next) {
         } else {
             req.userId = decodedToken.sub;
 
-            User.updateOne({
-                '_id': req.userId,
-                'mailBoxes': {
-                    '$elemMatch': {
-                        'mails.messageId': req.body.messageId
-                    }
-                }
-            }, 
-            { $set: {
-                'mailBoxes.$[].mails.$[inner].unseen': parseFloat(req.body.unseen)
-            }},
-            { 'arrayFilters': [
-                {'inner.messageId': req.body.messageId}
-            ]}, (err) => {
-                if (err) {
+            let promises = [];
+        
+            for (let i = 0; i < req.body.messageId.length; i++) {
+                promises.push(updateFolder(req.userId, req.body.messageId[i], parseFloat(req.body.unseen), i));
+            }
+
+            Promise.all(promises).then((success) => {
+                successSum = success.reduce((a, b) => a + b, 0);
+                if (successSum > 0) {
                     return res.json({
-                        success: 0,
-                        msg: 'Nie udało się zmienić unseen'
+                        success: 1,
+                        msg: 'Pomyślnie zmienono wartość unseen'
                     });
                 } else {
                     return res.json({
-                        success: 1,
-                        msg: 'Pomyślnie zmienono unseen'
+                        success: 0,
+                        msg: 'Nie udało się zmienić wartości unseen'
                     });
                 }
             });
@@ -62,6 +57,33 @@ async function changeUnseen (req, res, next) {
     });
 }
 
-
+async function updateFolder (userId, messageId, unseen) {
+    try {  
+        return new Promise(async (resolve) => {
+            await User.updateOne({
+                '_id': userId,
+                'mailBoxes': {
+                    '$elemMatch': {
+                        'mails.messageId': messageId
+                    }
+                }
+            }, 
+            { $set: {
+                'mailBoxes.$[].mails.$[inner].unseen': unseen
+            }},
+            { 'arrayFilters': [
+                {'inner.messageId': messageId}
+            ]}, (err) => {
+                if (err) {
+                    return resolve(0);
+                } else {
+                    return resolve(1);
+                }
+            });
+        });
+    } catch (err) {
+        console.log('ERROR: ', err);
+    }
+}
 
 module.exports = changeUnseen;
