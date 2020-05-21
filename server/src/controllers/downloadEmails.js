@@ -64,9 +64,24 @@ async function download(foundUser, userId, k, counter){
             userId: userId
         };
 
+        if (foundUser.mailBoxes[k].mails.length != 0) {
+            let dateArray = [];
+            let date = null;
+
+            for (i = 0; i < foundUser.mailBoxes[k].mails.length; i++) {
+                date = foundUser.mailBoxes[k].mails[i].date
+                dateArray.push(date);
+            }
+            sortedArray = dateArray.sort((a, b) => b - a);
+            newestEmailDateString = sortedArray[0].toISOString();
+            newestEmailDate = newestEmailDateString.split('T', 1)[0]
+        } else { newestEmailDate = '1970-01-01' }
+
+        
+
         if(foundUser.mailBoxes[k].protocol == 'imap'){
-            downloadEmailsImap(userData).then(emails => {
-                console.log('wyjscie z imap')
+            downloadEmailsImap(userData, newestEmailDate).then(emails => {
+                //console.log('wyjscie z imap')
                 addToDatabase(emails, userData).then(success => {
                     if (success > 0) {
                         return resolve(counter += success);
@@ -76,9 +91,9 @@ async function download(foundUser, userId, k, counter){
                 });
             });
         } else {
-            console.log('Pop3');
+            //console.log('Pop3');
             downloadEmailsPop3(userData).then(emails => {
-                console.log('wyjscie z pop3')
+                //console.log('wyjscie z pop3')
                 addToDatabase(emails, userData).then(success => {
                     if (success > 0) {
                         return resolve(counter += success);
@@ -121,13 +136,13 @@ async function addToDatabase(emails, userData) {
                 }}});
                 mailCounter ++;
             } 
-            console.log('mailCounter:', mailCounter);
+            //console.log('mailCounter:', mailCounter);
         }
         if (mailCounter == 0) {
-            console.log('returning 0');
+            //console.log('returning 0');
             return resolve(0);
         }
-        console.log('returning mailCounter');
+        //console.log('returning mailCounter');
         return resolve(mailCounter);
     });
 }

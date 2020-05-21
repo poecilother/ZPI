@@ -2,7 +2,7 @@ const Imap = require('imap')
 const inspect = require('util').inspect;
 const simpleParser = require('mailparser').simpleParser;
 
-async function downloadEmailsImap(imapData) {
+async function downloadEmailsImap(imapData, newestEmailDate) {
     return new Promise((resolve, reject) => {
         const imap = new Imap({
             user: imapData.user,
@@ -36,7 +36,7 @@ async function downloadEmailsImap(imapData) {
                 // var f = imap.seq.fetch('1:1', {
                 // bodies: ''
                 //});
-                imap.search([ 'UNSEEN', ['SINCE', 'April 16, 2020'] ], function(err, results) {
+                imap.search([ 'UNSEEN', ['SINCE', newestEmailDate] ], function(err, results) {
                     if (err) throw err;
                     var f = imap.fetch(results, { bodies: '' });
                     f.on('message', function(msg, seqno) {
