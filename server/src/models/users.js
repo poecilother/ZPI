@@ -65,7 +65,8 @@ const userSchema = new Schema({
                 type: String
             },
             unseen: {
-                type: Boolean
+                type: Number,
+                enum: [0, 1]
             },
             folder: {
                 type: Number,

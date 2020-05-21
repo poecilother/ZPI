@@ -11,6 +11,22 @@ function changeFolder (req, res, next) {
         })
     }
 
+    if (req.body.folder < 1 || req.body.folder > 3){
+        return res.json({
+            success: 0,
+            msg: 'Niepoprawny folder'
+        });
+    }
+    
+    let x = parseFloat(req.body.folder);
+
+    if (isNaN(x) || !(parseInt(Number(x)) == x)){
+        return res.json({
+            success: 0,
+            msg: 'Niepoprawny folder'
+        });
+    }
+
     jwt.verify(req.header('authorization'), process.env.JWT_SECRET, async (err, decodedToken) => {
         if (err) {
             return res.json({ success: -1 });
@@ -20,7 +36,7 @@ function changeFolder (req, res, next) {
             let promises = [];
         
             for (let i = 0; i < req.body.messageId.length; i++) {
-                promises.push(updateFolder(req.userId, req.body.messageId[i], req.body.folder, i));
+                promises.push(updateFolder(req.userId, req.body.messageId[i], parseFloat(req.body.folder), i));
             }
 
             Promise.all(promises).then((success) => {

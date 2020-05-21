@@ -39,9 +39,11 @@ async function getMails (req, res, next) {
                             if (!foundUser.mailBoxes[i].mails) {
                                 i++;
                             } else {
+                                let k = 0;
                                 for (let j = 0; j < foundUser.mailBoxes[i].mails.length; j++) {
                                     if (foundUser.mailBoxes[i].mails[j].folder == req.query.folder) {
-                                        promises.push(pushMails(foundUser, i, j, mails));
+                                        promises.push(pushMails(foundUser, i, j, mails, k));
+                                        k++;
                                     }
                                 }
                             }
@@ -90,12 +92,14 @@ async function getMails (req, res, next) {
                         '_id':req.userId,
                         'mailBoxes.user': req.query.user
                     }, 'mailBoxes.$');
-                    
+
                     if (foundUser) {
+                        let k = 0;
                         for (j = 0; j < foundUser.mailBoxes[0].mails.length; j++) {
                             if (foundUser.mailBoxes[0].mails[j].folder == req.query.folder) {
                                 mails.push(foundUser.mailBoxes[0].mails[j]);
-                                delete mails[j].body;
+                                delete mails[k].body;
+                                k++;
                             }
                         }
                     }
@@ -114,11 +118,11 @@ async function getMails (req, res, next) {
     }
 }
 
-async function pushMails(foundUser, i, j, mails) {
+async function pushMails(foundUser, i, j, mails, k) {
     try{
         return new Promise((resolve) => {
             mails.push(foundUser.mailBoxes[i].mails[j]);
-            delete mails[j].body;
+            delete mails[k].body;
             return resolve(mails);
         });
     } catch (err) {

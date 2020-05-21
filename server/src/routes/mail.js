@@ -13,6 +13,7 @@ const getMailsFromBlacklist = require('../controllers/getMailsFromBlacklist');
 const delMailFromBlacklist = require('../controllers/delMailFromBlacklist');
 const addWordToBlacklist = require('../controllers/addWordToBlacklist');
 const getWordsFromBlacklist = require('../controllers/getWordsFromBlacklist');
+const changeUnseen = require('../controllers/changeUnseen');
 
 router.use('/imap', require('../routes/imap'));
 router.use('/pop3', require('../routes/pop3'));
@@ -44,5 +45,7 @@ router.delete('/delmailfromblacklist', delMailFromBlacklist);
 router.post('/addwordtoblacklist', addWordToBlacklist);
 
 router.get('/getwordsfromblacklist', getWordsFromBlacklist);
+
+router.put('/changeunseen', changeUnseen);
 
 module.exports = router;
