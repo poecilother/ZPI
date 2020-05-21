@@ -1,7 +1,7 @@
 const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 
-async function delMailFromBlacklist (req, res, next) {
+async function delWordFromBlacklist (req, res, next) {
     try {
         if(!req.body.user) {
             return res.json({
@@ -10,10 +10,10 @@ async function delMailFromBlacklist (req, res, next) {
             });
         }
 
-        if(!req.body.mail) {
+        if(!req.body.word) {
             return res.json({
                 success: 0,
-                msg: 'Podaj skrzynkę, którą chcesz usunąć z blacklisty'
+                msg: 'Podaj słowo'
             });
         }
         
@@ -33,18 +33,20 @@ async function delMailFromBlacklist (req, res, next) {
                         success: 0,
                         msg: 'Brak skrzynki o takim adresie'
                     });
-                } 
+                }
+
+                const word = req.body.word.toLowerCase();
 
                 const foundMail = await User.findOne({
                     '_id': req.userId,
                     'mailBoxes.user': req.body.user,
-                    'mailBoxes.blacklist.mails': req.body.mail
+                    'mailBoxes.blacklist.words': word
                 });
 
                 if (!foundMail) {
                     return res.json({
                         success: 0,
-                        msg: 'Na blackliście nie ma maila o takim adresie'
+                        msg: 'Na blackliście nie ma takiego słowa'
                     });
                 }
 
@@ -52,12 +54,12 @@ async function delMailFromBlacklist (req, res, next) {
                     '_id': req.userId,
                     'mailBoxes.user': req.body.user
                 }, { $pull: {
-                    'mailBoxes.$.blacklist.mails': req.body.mail
+                    'mailBoxes.$.blacklist.words': word
                 }}, (err) => {
                     if (err) {
                         return res.json({
                             success: 0,
-                            msg: 'Nie udało się usunąć maila z blacklisty'
+                            msg: 'Nie udało się usunąć słowa z blacklisty'
                         });
                     } else {
                         return res.json({
@@ -74,4 +76,4 @@ async function delMailFromBlacklist (req, res, next) {
     }
 }
 
-module.exports = delMailFromBlacklist;
+module.exports = delWordFromBlacklist;

@@ -54,7 +54,8 @@ function addBoxPop3(req, res, next){
               user: req.body.user,
               password: req.body.password,
               host: req.body.host,
-              level: 2
+              level: 2,
+              mails: []
             }}});
 
             res.locals.success = 1;
