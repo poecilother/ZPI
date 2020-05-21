@@ -24,13 +24,6 @@ async function getMails (req, res, next) {
     
                     if (foundUser) {
                         let promises = [];
-    
-                        if (foundUser.mailBoxes.length == 0) {
-                            return res.json({
-                                success: 0,
-                                msg: 'Nie masz żadnych wiadomości'
-                            });  
-                        }
                         
                         mails = [];
 
@@ -59,13 +52,6 @@ async function getMails (req, res, next) {
                             }
 
                             console.log('Długość mails: ', mails[0].length)
-
-                            if (mails.length == 0) {
-                                return res.json({
-                                    success: 0,
-                                    msg: 'Nie masz żadnych wiadomości'
-                                });  
-                            }
 
                             sendMails = [];
 
