@@ -16,13 +16,13 @@
         <h2>{{ authTitle }}</h2>
         <div class="auth-login" v-if="auth == 1">
           <input class="default" type="text" placeholder="Login" v-model="loginUsername">
-          <input class="default" type="password" placeholder="Hasło" v-model="loginPassword">
+          <input class="default" type="password" placeholder="Hasło" v-model="loginPassword" v-on:keyup.enter="action()">
         </div>
         <div class="auth-register" v-if="auth == 2">
           <input class="default" type="text" placeholder="Login" v-model="registerUsername">
           <input class="default" type="text" placeholder="Email" v-model="registerEmail">
           <input class="default" type="password" placeholder="Hasło" v-model="registerPassword1">
-          <input class="default" type="password" placeholder="Powtórz hasło" v-model="registerPassword2">
+          <input class="default" type="password" placeholder="Powtórz hasło" v-model="registerPassword2" v-on:keyup.enter="action()">
         </div>
         <div class="auth-password" v-if="auth == 3">
           <input class="default" type="text" placeholder="Email">
@@ -33,7 +33,7 @@
             <li>
               <a href="#" @click="changeAuth(1)">{{ link1 }}</a>
             </li>
-            <li>
+            <li style="display: none">
               <a href="#" @click="changeAuth(2)">{{ link2 }}</a>
             </li>
           </ul>

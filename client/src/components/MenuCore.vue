@@ -14,17 +14,17 @@
         <li :class="{ active: user == '' && folder == 1 }" @click="chooseInbox('', 1)">
           <i class="material-icons">inbox</i>
           <h4>Skrzynka odbiorcza</h4>
-          <h5>25</h5>
+          <h5 v-if="allFolder1 != 0">{{ allFolder1 }}</h5>
         </li>
         <li :class="{ active: user == '' && folder == 2 }" @click="chooseInbox('', 2)">
           <i class="material-icons">report</i>
           <h4>Spam</h4>
-          <h5>5</h5>
+          <h5 v-if="allFolder2 != 0">{{ allFolder2 }}</h5>
         </li>
         <li :class="{ active: user == '' && folder == 3 }" @click="chooseInbox('', 3)">
           <i class="material-icons">delete</i>
           <h4>Usunięte</h4>
-          <h5>3</h5>
+          <h5 v-if="allFolder3 != 0">{{ allFolder3 }}</h5>
         </li>
       </ul>
     </div>
@@ -34,17 +34,17 @@
         <li :class="{ active: user == box.user && folder == 1 }" @click="chooseInbox(box.user, 1)">
           <i class="material-icons">inbox</i>
           <h4>Skrzynka odbiorcza</h4>
-          <h5>25</h5>
+          <h5 v-if="box.folder_1 != 0">{{ box.folder_1 }}</h5>
         </li>
         <li :class="{ active: user == box.user && folder == 2 }" @click="chooseInbox(box.user, 2)">
           <i class="material-icons">report</i>
           <h4>Spam</h4>
-          <h5>5</h5>
+          <h5 v-if="box.folder_2 != 0">{{ box.folder_2 }}</h5>
         </li>
         <li :class="{ active: user == box.user && folder == 3 }" @click="chooseInbox(box.user, 3)">
           <i class="material-icons">delete</i>
           <h4>Usunięte</h4>
-          <h5>3</h5>
+          <h5 v-if="box.folder_3 != 0">{{ box.folder_3 }}</h5>
         </li>
       </ul>
     </div>
@@ -59,6 +59,9 @@ export default {
       boxes: '',
       user: 0,
       folder: 1,
+      allFolder1: '',
+      allFolder2: '',
+      allFolder3: '',
     }
   },
   computed: {
@@ -73,7 +76,10 @@ export default {
     },
     reloadBoxes(){
       return this.$store.state.reloadBoxes;
-    }
+    },
+    reloadMenuCore(){
+      return this.$store.state.reloadMenuCore;
+    },
   },
   created(){
     this.getBoxesApi();
@@ -89,7 +95,10 @@ export default {
     },
     reloadBoxes(){
       this.getBoxesApi();
-    }
+    },
+    reloadMenuCore(){
+      this.getBoxesApi();
+    },
   },
   methods:{
     closeMenu(){
@@ -104,6 +113,14 @@ export default {
         }else{
           self.$store.commit('getNewToken', 0);
           self.boxes = response.data.boxes;
+          self.allFolder1 = 0;
+          self.allFolder2 = 0;
+          self.allFolder3 = 0;
+          for(let i = 0; i < self.boxes.length; i++){
+            self.allFolder1 += self.boxes[i].folder_1;
+            self.allFolder2 += self.boxes[i].folder_2;
+            self.allFolder3 += self.boxes[i].folder_3;
+          }
         }
       });
     },

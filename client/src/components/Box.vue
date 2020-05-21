@@ -19,6 +19,7 @@ export default {
   data(){
     return{
       mails: [],
+      unseenIds: [],
     }
   },
   computed:{
@@ -40,6 +41,9 @@ export default {
     subAction(){
       return this.$store.state.subAction;
     },
+    downloadMails(){
+      return this.$store.state.downloadMails;
+    }
   },
   mounted(){
     this.getMails()
@@ -48,6 +52,8 @@ export default {
     newToken(){
       if(this.newToken == -8){
         this.getMails();
+      }else if(this.newToken == -17){
+        this.changeUnseenApi();
       }
     },
     activeInboxUser(){
@@ -64,10 +70,29 @@ export default {
           this.$store.commit('changeSubAction', 0);
         break;
         case 2:
-          console.log(23)
           this.$store.commit('clearSelected');
           this.$store.commit('changeSubAction', 0);
         break;
+        case 3:
+          let mailsArray = []
+          for(let i = 0; i < this.mails.length; i++){
+            mailsArray.push(this.mails[i].messageId)
+          }
+          this.changeUnseen(mailsArray);
+          this.$store.commit('clearSelected');
+          this.$store.commit('changeSubAction', 0);
+        break;
+        case 4:
+          this.changeUnseen(this.selectedMails);
+          this.$store.commit('clearSelected');
+          this.$store.commit('changeSubAction', 0);
+        break;
+      }
+    },
+    downloadMails(){
+      if(this.downloadMails == 1){
+        this.getMails();
+        this.$store.commit('changeDownloadMails');
       }
     }
   },
@@ -82,6 +107,9 @@ export default {
       this.$store.commit('changeReadMailId', id);
       this.$store.commit('changeReadMailUnseen', unseen);
       this.$router.push('/inbox/mail')
+      if(unseen){
+        this.changeUnseen([id]);
+      }
     },
     shortSubject(value){
       if(value.length >= 40){
@@ -112,14 +140,13 @@ export default {
       let mailDate = new Date(date);
       let substract = new Date(Math.abs(mailDate - today));
       let substractDays = substract.getDate() - 1;
-      console.log(date + ' ' + substractDays)
       if(substractDays == 0){
         return mailTime;
       }else if(substractDays == 1){
         return 'Wczoraj, ' + mailTime;
-      }else if(substractDays > 1 && substractDays < 8){
-        let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        return days[mailDate.getDay()]; + ', ' + mailTime;
+      }else if(substractDays > 1 && substractDays < 7){
+        let days = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
+        return days[mailDate.getDay()] + ', ' + mailTime;
       }else if(mailYear == today.getFullYear()){
         return mailDay + '-' + mailMonth + ' ' + mailTime
       }else{
@@ -142,7 +169,27 @@ export default {
           self.$store.commit('clearSelected');
           self.mails = response.data.mails;
           self.$store.commit('changeAllMails', self.mails.length);
-          self.$store.commit('changeUnseenMails', 2);
+          let mailsUnseen = 0;
+          for(let i = 0; i < self.mails.length; i++){
+            if(self.mails[i].unseen == 1){
+              mailsUnseen++;
+            }      
+          }
+          self.$store.commit('changeUnseenMails', mailsUnseen);
+        }
+      });
+    },
+    changeUnseen(ids){
+      this.unseenIds = ids;
+      this.changeUnseenApi();
+    },
+    changeUnseenApi(){
+      this.axios.put(this.api + 'mail/changeunseen', { messageId: this.unseenIds, unseen: 0 }, { headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 17);
+        }else if(response.data.success == 1){
+          self.getMails();
         }
       });
     }
@@ -151,14 +198,14 @@ export default {
 </script>
 
 <style lang="scss">
-section#box { width: calc(100% - 300px); color: #000; }
+section#box { width: calc(100% - 300px); color: #000; overflow-y: overlay; }
 section#box ul { margin: 0; padding: 0; }
 section#box ul li { display: flex; flex-wrap: wrap; align-items: center; width: 100%; min-height: 50px; max-height: 80px; margin-left: -1px; padding: 0 20px 0 16px; padding: 0 20px 0 0px; list-style: none; 
 border-bottom: 1px solid #f3f2f1; border-left: 5px solid #fff; background: #fff; cursor: pointer; }
 section#box ul li:first-child { border-top: 1px solid #edebe9; }
 section#box ul li:hover { background: #E8E8E8; border-left: 5px solid #E8E8E8; }
 section#box ul li.checked { background: rgba(88, 22, 122, 0.4); background: linear-gradient(315deg, rgba(50,38,148,0.5) 0%, rgba(87,23,120,0.5) 100%); border: 0; 
-   border-bottom: 1px solid rgba(255, 255, 255, 0.1);}
+   border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-left: 5px;}
 section#box ul li.checked:first-child { border-top: 1px solid rgba(255, 255, 255, 0.1); }
 section#box ul li.unread { border-left: 5px solid $blue; }
 section#box ul li.unread:hover { border-left: 5px solid $blue; }

@@ -44,6 +44,11 @@
         <i class="material-icons desktop">delete</i>
         <h5>Usuń</h5>
       </li>
+      <li v-if="restore == 1" @click="action(9)">
+        <i class="material-icons mobile" v-b-tooltip.hover title="Usuń">delete</i>
+        <i class="material-icons desktop">inbox</i>
+        <h5>Przywróć</h5>
+      </li>
     </ul>
   </header>
 </template>
@@ -61,6 +66,8 @@ export default {
       spam: 0,
       ham: 0,
       back: 0,
+      restore: 0,
+      folder: 0,
     }
   },
   computed:{
@@ -110,12 +117,18 @@ export default {
         this.dele = 0;
         this.spam = 0;
         this.ham = 0;
+        this.restore = 0;
       }
+    if(this.unseenMails == 0){
+      this.checkAllAsRed = 0;
+    }
   },
   watch: {
     newToken(){
       if(this.newToken == -9){
-        this.getBoxesApi();
+        this.downloadEmails();
+      }else if(this.newToken == -11){
+        this.changeFolder(this.folder)
       }
     },
     readMailId(){
@@ -135,6 +148,7 @@ export default {
         this.spam = 0;
         this.ham = 0;
         this.dele = 0;
+        this.restore = 0;
         this.adjust();
       }
       if(this.activeInboxFolder == 1){
@@ -149,8 +163,10 @@ export default {
       }
       if(this.activeInboxFolder == 3){
         this.dele = 0;
+        this.restore = 1;
       }else{
         this.dele = 1;
+        this.restore = 0;
       }
     },
     allMails(){
@@ -162,6 +178,7 @@ export default {
         this.dele = 0;
         this.spam = 0;
         this.ham = 0;
+        this.restore = 0;
       }
     },
     selectedMails(){
@@ -188,7 +205,7 @@ export default {
         }else{
           this.checkAll = 1;
           this.uncheckAll = 0;
-          if(this.selectedMails.length != 0){
+          if(this.selectedMails.length == 0){
              this.checkAllAsRed = 1;
           }else{
              this.checkAllAsRed = 0;
@@ -197,6 +214,10 @@ export default {
           this.dele = 0;
           this.spam = 0;
           this.ham = 0;
+          this.restore = 0;
+        }
+        if(this.unseenMails == 0){
+          this.checkAllAsRed = 0;
         }
       }else{
         if(this.selectedMails.length != this.allMails && this.unseenSelectedMails.length != 0){
@@ -210,9 +231,11 @@ export default {
           this.checkAllAsRed = 0;
         }
         this.uncheckAll = 1;
-        if(this.unseenSelectedMails.length > 1){
+        if(this.unseenSelectedMails.length > 0){
+          this.checkAllAsRed = 0;
           this.checkAsRed = 1;
         }else{
+          this.checkAllAsRed = 1;
           this.checkAsRed = 0;
         }
         if(this.activeInboxFolder == 1){
@@ -226,15 +249,30 @@ export default {
           this.ham = 0;
         }
         if(this.activeInboxFolder == 3){
+          this.restore = 1;
           this.dele = 0;
         }else{
+          this.restore = 0;
           this.dele = 1;
+        }
+        if(this.unseenMails == 0){
+          this.checkAllAsRed = 0;
         }
       }
     },
     action(id){
       if(id != 8){
        this.$store.commit('changeSubAction', id);
+       this.$store.commit('changeReloadMenuCore');
+       if(id == 5){
+         this.changeFolder(2);
+       }else if(id == 6){
+          this.changeFolder(1);
+       }else if(id == 7){
+         this.changeFolder(3);
+       }else if(id == 9){
+         this.changeFolder(1);
+       }
       }else{
         this.$store.commit('changeReadMailId', 0);
         this.$router.push('/inbox');
@@ -249,6 +287,21 @@ export default {
           self.$store.commit('getNewToken', 9);
         }else{
           self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
+          if(response.data.success == 1){
+            self.$store.commit('changeDownloadMails');
+          }
+        }
+      });
+    },
+    changeFolder(id){
+      this.folder = id;
+      this.axios.put(this.api + 'mail/changefolder', { messageId: this.selectedMails, folder: id }, { headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 11);
+        }else if(response.data.success == 1){
+          self.$store.commit('changeDownloadMails');
+          self.$store.commit('changeReloadMenuCore');
         }
       });
     }

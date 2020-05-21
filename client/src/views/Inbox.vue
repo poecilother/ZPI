@@ -113,7 +113,7 @@ export default {
 
 <style lang="scss">
   div.inbox { height: 100vh; }
-  div#wrapper { display: flex; height: calc(100vh - 50px - 50px); background: #faf9f8; overflow-y: overlay; }
+  div#wrapper { display: flex; height: calc(100vh - 50px - 50px); background: #faf9f8; }
 
   .spinner {
     position: absolute;

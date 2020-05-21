@@ -19,46 +19,38 @@
             <button v-b-tooltip.hover title="Zaawansowane filtrowanie spamu" :class="{ active: box.level == 3 }" @click="changeLevel(3, box.level, box.user)">hard</button>
           </div>
           <footer>
-            <h6>Czarna lista</h6>
+            <h6 @click="showBlacklist(box.user)">Czarna lista</h6>
             <h5>{{ getHost(box.user) }}</h5>
           </footer>
         </div>
       </section>
-      <h5 class="section-header" v-if="boxes.length != 0">Czarna lista słów - dfecica</h5>
-      <section class="blacklist words" v-if="boxes.length != 0">
+      <h5 class="section-header" v-if="blacklist == 1">Czarna lista słów - {{ blacklistUser }}</h5>
+      <section class="blacklist words" v-if="blacklist == 1">
         <div class="add">
-          <input class="default" type="text" placeholder="Słowo">
+          <input class="default" type="text" placeholder="Słowo" v-model="blacklistWord" v-on:keyup.enter="blacklistWordAdd()">
           <button class="icon">
-            <i class="material-icons" v-b-tooltip.hover title="Dodaj">add</i>
+            <i class="material-icons" v-b-tooltip.hover title="Dodaj" @click="blacklistWordAdd()">add</i>
           </button>
         </div>
         <div class="words">
-          <div class="word">
-            <p>money</p>
-            <i class="material-icons">close</i>
-          </div>
-          <div class="word">
-            <p>example</p>
-            <i class="material-icons" v-b-tooltip.hover title="Usuń">close</i>
+          <div class="word"  v-for="word in blacklistWords" :key="word">
+            <p>{{ word }}</p>
+            <i class="material-icons" @click="blacklistWordDelete(word)">close</i>
           </div>
         </div>
       </section>
-      <h5 class="section-header" v-if="boxes.length != 0">Czarna lista maili - dfecica</h5>
-      <section class="blacklist emails" v-if="boxes.length != 0">
+      <h5 class="section-header" v-if="blacklist == 1">Czarna lista emaili - {{ blacklistUser }}</h5>
+      <section class="blacklist emails" v-if="blacklist == 1">
         <div class="add">
-          <input class="default" type="text" placeholder="Email">
+          <input class="default" type="text" placeholder="Email" v-model="blacklistEmail" v-on:keyup.enter="blacklistMailAdd()">
           <button class="icon">
-            <i class="material-icons" v-b-tooltip.hover title="Dodaj">add</i>
+            <i class="material-icons" v-b-tooltip.hover title="Dodaj" @click="blacklistMailAdd()">add</i>
           </button>
         </div>
         <div class="words">
-          <div class="word">
-            <p>money@moneny.pl</p>
-            <i class="material-icons">close</i>
-          </div>
-          <div class="word">
-            <p>example@example.com</p>
-            <i class="material-icons" v-b-tooltip.hover title="Usuń">close</i>
+          <div class="word" v-for="email in blacklistEmails" :key="email">
+            <p>{{ email }}</p>
+            <i class="material-icons" @click="blacklistMailDelete(email)">close</i>
           </div>
         </div>
       </section>
@@ -83,6 +75,15 @@ export default {
       boxes: '',
       user: '',
       level: 0,
+      blacklist: 0,
+      blacklistMail: 0,
+      blacklistUser: 0,
+      blacklistEmail: '',
+      blacklistWord: '',
+      blacklistEmails: [],
+      blacklistWords: [],
+      blacklistMailDel: '',
+      blacklistWordDel: '',
     }
   },
   computed:{
@@ -124,7 +125,20 @@ export default {
         this.delApi();
       }else if(this.newToken == -7){
         this.changeLevelApi();
+      }else if(this.newToken == -11){
+        this.blacklistMailAdd();
+      }else if(this.newToken == -12){
+        this.blacklistMailGet();
+      }else if(this.newToken == -13){
+        this.blacklistMailDelete();
+      }else if(this.newToken == -14){
+        this.blacklistWordAdd();
+      }else if(this.newToken == -15){
+        this.blacklistWordGet();
+      }else if(this.newToken == -16){
+        this.blacklistWordDelete();
       }
+      
     },
     showPopup(){
       this.getBoxesApi();
@@ -166,7 +180,6 @@ export default {
         if(response.data.success == -1){
           self.$store.commit('getNewToken', 2);
         }else{
-          console.log(23)
           self.$store.commit('getNewToken', 0);
           self.password1 = '';
           self.password2 = '';
@@ -180,7 +193,7 @@ export default {
     },
     delApi(){
       let self = this;
-      this.axios.delete(this.api + 'mail/del', {data: { user: this.user }, headers: {  Authorization: localStorage.access_token }})
+      this.axios.delete(this.api + 'mail/del', { data: { user: this.user }, headers: {  Authorization: localStorage.access_token }})
       .then(function (response) {
         if(response.data.success == -1){
           self.$store.commit('getNewToken', 5);
@@ -188,7 +201,6 @@ export default {
           self.$store.commit('getNewToken', 0);
           self.getBoxesApi();
           self.$store.commit('changeReloadBoxes');
-          //self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
         }
       });
     },
@@ -223,6 +235,110 @@ export default {
       index = host.indexOf(".");
       host = host.substring(0, index);
       return host;
+    },
+    showBlacklist(userMail){
+      this.blacklistMail = userMail;
+      let user = this.getUserLogin(userMail)
+      if(this.blacklistUser == user && this.blacklist == 1){
+        this.blacklist = 0;
+      }else{
+        this.blacklist = 1;
+      }
+      this.blacklistUser = user;
+      this.blacklistEmails = [];
+      this.blacklistWords = []
+      this.blacklistMailGet();
+      this.blacklistWordGet();
+    },
+    blacklistMailAdd(){
+      let self = this;
+      this.axios.post(this.api + 'mail/addmailtoblacklist', { user: this.blacklistMail, mail: this.blacklistEmail }, { headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 11);
+        }else{
+          self.$store.commit('getNewToken', 0);
+          if(response.data.success == 0){
+            self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
+          }else{
+            self.blacklistEmail = '';
+            self.blacklistMailGet();
+          }
+        }
+      });
+    },
+    blacklistMailGet(){
+      let self = this;
+      this.axios.get(this.api + 'mail/getmailsfromblacklist', { params: { user: this.blacklistMail}, headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 12);
+        }else{
+          self.$store.commit('getNewToken', 0);
+          self.blacklistEmails = response.data.mails;
+        }
+      });
+    },
+    blacklistMailDelete(mail){
+      this.blacklistMailDel = mail;
+      this.blacklistMailDeleteApi();
+    },
+    blacklistMailDeleteApi(){
+      let self = this;
+      this.axios.delete(this.api + 'mail/delmailfromblacklist', { data: { user: this.blacklistMail, mail: this.blacklistMailDel}, headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 13);
+        }else{
+          self.$store.commit('getNewToken', 0);
+          self.blacklistMailGet();
+        }
+      });
+    },
+    blacklistWordAdd(){
+      let self = this;
+      this.axios.post(this.api + 'mail/addwordtoblacklist', { user: this.blacklistMail, word: this.blacklistWord }, { headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 14);
+        }else{
+          self.$store.commit('getNewToken', 0);
+          if(response.data.success == 0){
+            self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
+          }else{
+            self.blacklistWord = '';
+            self.blacklistWordGet();
+          }
+        }
+      });
+    },
+    blacklistWordGet(){
+      let self = this;
+      this.axios.get(this.api + 'mail/getwordsfromblacklist', { params: { user: this.blacklistMail}, headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 15);
+        }else{
+          self.$store.commit('getNewToken', 0);
+          self.blacklistWords = response.data.words;
+        }
+      });
+    },
+    blacklistWordDelete(word){
+      this.blacklistWordDel = word;
+      this.blacklistWordDeleteApi();
+    },
+    blacklistWordDeleteApi(){
+      let self = this;
+      this.axios.delete(this.api + 'mail/delwordfromblacklist', { data: { user: this.blacklistMail, word: this.blacklistWordDel}, headers: {  Authorization: localStorage.access_token }})
+      .then(function (response) {
+        if(response.data.success == -1){
+          self.$store.commit('getNewToken', 16);
+        }else{
+          self.$store.commit('getNewToken', 0);
+          self.blacklistWordGet();
+        }
+      });
     }
   }
 }
