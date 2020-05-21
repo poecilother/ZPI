@@ -61,11 +61,11 @@ async function downloadEmailsImap(imapData) {
                                 newEmail.messageId = mail.messageId;
                                 console.log('TEMAT: ' + email.subject);
                                 emails.push(newEmail);
-                                if(done){
+                                /*if(done){
                                     console.log('Returning emails');
                                     imap.end();
                                     return resolve(emails);
-                                }
+                                }*/
                             });
                         });
     
@@ -83,7 +83,9 @@ async function downloadEmailsImap(imapData) {
                     });
                     f.once('end', function() {
                         console.log('Done fetching all messages!');
-                        done = 1;
+                        console.log('Returning emails');
+                        imap.end();
+                        return resolve(emails);
                     });
                 });
             });

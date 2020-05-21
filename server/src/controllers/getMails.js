@@ -60,6 +60,13 @@ async function getMails (req, res, next) {
 
                             console.log('Długość mails: ', mails[0].length)
 
+                            if (mails.length == 0) {
+                                return res.json({
+                                    success: 0,
+                                    msg: 'Nie masz żadnych wiadomości'
+                                });  
+                            }
+
                             sendMails = [];
 
                             for (let i = 0; i < mails[0].length; i++) {
@@ -103,6 +110,13 @@ async function getMails (req, res, next) {
                             }
                         }
                     }
+                }
+
+                if (mails.length == 0) {
+                    return res.json({
+                        success: 0,
+                        msg: 'Nie masz żadnych wiadomości'
+                    });  
                 }
 
                 const sortedMails = mails.sort((a, b) => b.date - a.date);

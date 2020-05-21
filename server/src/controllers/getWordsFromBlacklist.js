@@ -26,7 +26,7 @@ async function getWordsFromBlacklist (req, res, next) {
                     
                     return res.json({
                         success: 1,
-                        mails: foundUser.mailBoxes[0].blacklist.words
+                        words: foundUser.mailBoxes[0].blacklist.words
                     });
 
                 } else {
