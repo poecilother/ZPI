@@ -97,14 +97,7 @@ async function getMails (req, res, next) {
                         }
                     }
                 }
-
-                if (mails.length == 0) {
-                    return res.json({
-                        success: 0,
-                        msg: 'Nie masz żadnych wiadomości'
-                    });  
-                }
-
+                
                 const sortedMails = mails.sort((a, b) => b.date - a.date);
 
                 return res.json({
