@@ -20,6 +20,7 @@ export default {
     return{
       mails: [],
       unseenIds: [],
+      callGetMails: 0,
     }
   },
   computed:{
@@ -43,6 +44,9 @@ export default {
     },
     downloadMails(){
       return this.$store.state.downloadMails;
+    },
+    reloadMails(){
+      return this.$store.state.reloadMails;
     }
   },
   mounted(){
@@ -55,6 +59,15 @@ export default {
       }else if(this.newToken == -17){
         this.changeUnseenApi();
       }
+    },
+    callGetMails(){
+      if(this.callGetMails == 1){
+        this.getMails();
+        this.callGetMails = 0;
+      }
+    },
+    reloadMails(){
+      this.getMails();
     },
     activeInboxUser(){
       this.getMails();
@@ -138,13 +151,13 @@ export default {
       let mailTime = dateString.substring(11, 16);
       let today = new Date();
       let mailDate = new Date(date);
-      let substract = new Date(Math.abs(mailDate - today));
+      let substract = new Date(Math.abs(today - mailDate));
       let substractDays = substract.getDate() - 1;
-      if(substractDays == 0){
+      if(substractDays == 0 && (today.getMonth() + 1) == parseInt(mailMonth) && today.getFullYear() == mailYear){
         return mailTime;
-      }else if(substractDays == 1){
+      }else if(substractDays == 1 && (today.getMonth() + 1) == parseInt(mailMonth) && today.getFullYear() == mailYear){
         return 'Wczoraj, ' + mailTime;
-      }else if(substractDays > 1 && substractDays < 7){
+      }else if(substractDays > 1 && substractDays < 7 && ((today.getMonth() + 1) == parseInt(mailMonth) || (parseInt(today.getMonth())) == (mailMonth - 1))  && today.getFullYear() == mailYear){
         let days = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
         return days[mailDate.getDay()] + ', ' + mailTime;
       }else if(mailYear == today.getFullYear()){
@@ -184,12 +197,14 @@ export default {
       this.changeUnseenApi();
     },
     changeUnseenApi(){
+      self = this;
       this.axios.put(this.api + 'mail/changeunseen', { messageId: this.unseenIds, unseen: 0 }, { headers: {  Authorization: localStorage.access_token }})
       .then(function (response) {
         if(response.data.success == -1){
           self.$store.commit('getNewToken', 17);
         }else if(response.data.success == 1){
-          self.getMails();
+          self.callGetMails = 1;
+          self.$store.commit('changeReloadMenuCore');
         }
       });
     }
@@ -208,6 +223,7 @@ section#box ul li.checked { background: rgba(88, 22, 122, 0.4); background: line
    border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-left: 5px;}
 section#box ul li.checked:first-child { border-top: 1px solid rgba(255, 255, 255, 0.1); }
 section#box ul li.unread { border-left: 5px solid $blue; }
+section#box ul li.unread.checked { padding-left: 0; }
 section#box ul li.unread:hover { border-left: 5px solid $blue; }
 section#box ul li.checked:hover { background: rgba(88, 22, 122, 0.5); }
 section#box ul li div.checkbox-field { display: flex; justify-content: center; align-items: center; width: 50px; height: 50px; }

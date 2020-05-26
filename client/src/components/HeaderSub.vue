@@ -289,6 +289,7 @@ export default {
           self.$store.commit('changeAlert', { type: response.data.success, msg: response.data.msg });
           if(response.data.success == 1){
             self.$store.commit('changeDownloadMails');
+            self.$store.commit('changeReloadMenuCore');
           }
         }
       });
@@ -314,6 +315,7 @@ export default {
   header.sub div.container-button { display: flex; justify-content: center; align-items: center; width: 300px; }
   header.sub div.container-button button { display: block; height: 35px; padding: 0 25px; background: $blue; border: 0; color: #fff; border-radius: 3px; font-size: 14px; }
   header.sub div.container-button button:hover { background: $blueDark; }
+  header.sub div.container-button button:focus { outline: 0; }
   header.sub ul { display: flex; align-items: center; margin: 0; padding: 0; }
   header.sub ul li { display: flex; max-height: 50px; padding: 7px 10px; list-style: none; color: rgba(0, 0, 0, 0.5); cursor: pointer; overflow: hidden; }
   header.sub ul li:hover { background: #edebe9; color: rgba(0, 0, 0, 0.7); }

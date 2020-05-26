@@ -32,6 +32,7 @@ export default {
           self.$store.commit('changeAlert', { type: -1, msg: '' });
         }, 3000);
       }else if(this.type == 2){
+        clearTimeout(this.timer);
         this.show = 1;
       }
     }

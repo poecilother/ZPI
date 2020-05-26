@@ -69,13 +69,13 @@ export default {
       let mailTime = dateString.substring(11, 16);
       let today = new Date();
       let mailDate = new Date(date);
-      let substract = new Date(Math.abs(mailDate - today));
+      let substract = new Date(Math.abs(today - mailDate));
       let substractDays = substract.getDate() - 1;
-      if(substractDays == 0){
+      if(substractDays == 0 && (today.getMonth() + 1) == parseInt(mailMonth) && today.getFullYear() == mailYear){
         return mailTime;
-      }else if(substractDays == 1){
+      }else if(substractDays == 1 && (today.getMonth() + 1) == parseInt(mailMonth) && today.getFullYear() == mailYear){
         return 'Wczoraj, ' + mailTime;
-      }else if(substractDays > 1 && substractDays < 7){
+      }else if(substractDays > 1 && substractDays < 7 && ((today.getMonth() + 1) == parseInt(mailMonth) || (parseInt(today.getMonth())) == (mailMonth - 1))  && today.getFullYear() == mailYear){
         let days = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
         return days[mailDate.getDay()] + ', ' + mailTime;
       }else if(mailYear == today.getFullYear()){
@@ -99,5 +99,6 @@ export default {
 
   @media (max-width: 1200px) {
     div#mail-wrapper { width: 100%; }
+    
   }
 </style>

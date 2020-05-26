@@ -201,6 +201,7 @@ export default {
           self.$store.commit('getNewToken', 0);
           self.getBoxesApi();
           self.$store.commit('changeReloadBoxes');
+          self.$store.commit('changeReloadMails', 0);
         }
       });
     },

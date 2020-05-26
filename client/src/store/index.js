@@ -27,6 +27,7 @@ export default new Vuex.Store({
     readMailUnseen: 0,
     downloadMails: 0,
     reloadMenuCore: 0,
+    reloadMails: 0,
   },
   mutations: {
     getNewToken(state, payload){
@@ -124,6 +125,13 @@ export default new Vuex.Store({
         state.reloadMenuCore = 0;
       }else{
         state.reloadMenuCore = 1;
+      }
+    },
+    changeReloadMails(state){
+      if(state.reloadMails){
+        state.reloadMails = 0;
+      }else{
+        state.reloadMails = 1;
       }
     }
   },
