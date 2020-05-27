@@ -125,7 +125,7 @@ export default {
       }
     },
     shortSubject(value){
-      if(value.length >= 40){
+      if(value !== undefined && value.length >= 40){
         value = value.substring(0, 40);
         value += "..."
       }

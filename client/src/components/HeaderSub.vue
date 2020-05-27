@@ -265,12 +265,24 @@ export default {
        this.$store.commit('changeSubAction', id);
        this.$store.commit('changeReloadMenuCore');
        if(id == 5){
+         if(this.readMailId != 0){
+           this.$store.commit('selectMail', this.readMailId);
+         }
          this.changeFolder(2);
        }else if(id == 6){
+         if(this.readMailId != 0){
+           this.$store.commit('selectMail', this.readMailId);
+         }
           this.changeFolder(1);
        }else if(id == 7){
+         if(this.readMailId != 0){
+           this.$store.commit('selectMail', this.readMailId);
+         }
          this.changeFolder(3);
        }else if(id == 9){
+         if(this.readMailId != 0){
+           this.$store.commit('selectMail', this.readMailId);
+         }
          this.changeFolder(1);
        }
       }else{
@@ -290,6 +302,7 @@ export default {
           if(response.data.success == 1){
             self.$store.commit('changeDownloadMails');
             self.$store.commit('changeReloadMenuCore');
+            self.$store.commit('changeReloadMails');
           }
         }
       });
@@ -303,6 +316,10 @@ export default {
         }else if(response.data.success == 1){
           self.$store.commit('changeDownloadMails');
           self.$store.commit('changeReloadMenuCore');
+          if(self.readMailId != 0 && self.$router.currentRoute.name == 'Mail'){
+            self.$store.commit('changeReadMailId', 0);
+            self.$router.push('/inbox');
+          }
         }
       });
     }
